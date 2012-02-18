@@ -24,6 +24,10 @@ void initBoard(void) {
 	LEDS = 0;   // switch leds off	
 }
 
+void setLedRegister(BYTE led) {
+	LEDS = led;
+}
+
 void setLed(BYTE position) {
   switch (position) {
     case 0: LED0 = TRUE; break;

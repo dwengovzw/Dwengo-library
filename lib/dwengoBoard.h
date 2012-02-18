@@ -116,6 +116,13 @@
   #define SW_W_DIR            TRISBbits.TRISB0
 #endif
 
+#define isPressedSW_N()		(SW_N==PRESSED)
+#define isPressedSW_E()		(SW_E==PRESSED)
+#define isPressedSW_S()		(SW_S==PRESSED)
+#define isPressedSW_W()		(SW_W==PRESSED)
+#define isPressedSW_C()		(SW_C==PRESSED)
+
+
 // LCD display
 #define LCD_DATA            PORTD 
 #define LCD_DATA_DIR        TRISD
@@ -169,6 +176,16 @@
  * enables all switches and sets LED pins as outputs. Additionally the LCD is initialized by this function.
  */
 void initBoard(void);
+
+/**
+ * \brief Set all LEDs at once
+ *
+ * Set all LEDs at once
+ *
+ * @param led  value that you want to initialize PORTD (LEDS) with
+ */
+void setLedRegister(BYTE led);
+
 
 /**
  * \brief Set specific LED
