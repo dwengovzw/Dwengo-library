@@ -7,6 +7,8 @@ MCC_L=$(MCC_BIN)/mplib
 
 CFLAGS=-ls --no-extended -ml -p=18f4550
 
+all: check $(TARGET)
+
 check:
 	@if [ ! -x ${MCC_C} ]; then echo ${MCC_C} not found, please make sure MCC_BIN is set correctly; false; fi
 	@if [ ! -x ${MCC_L} ]; then echo ${MCC_L} not found, please make sure MCC_BIN is set correctly; false; fi
@@ -19,8 +21,6 @@ $(TARGET): $(OBJECTS)
 	rm -f $(TARGET)
 	${MCC_L} -q -c $(TARGET)
 	${MCC_L} -q -r $(TARGET) $(OBJECTS)
-
-all: check $(TARGET)
 
 clean:
 	rm -f *.o $(TARGET)
