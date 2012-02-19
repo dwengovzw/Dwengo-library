@@ -19,7 +19,6 @@
 #ifndef DWENGO_SERVO_H
 #define DWENGO_SERVO_H
 
-#include <p18f4550.h> 
 #include "dwengoBoard.h"
 
 // Definitions

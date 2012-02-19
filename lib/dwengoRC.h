@@ -19,7 +19,6 @@
 #ifndef DWENGO_RC_H
 #define DWENGO_RC_H
 
-#include <p18f4550.h> 
 #include "dwengoBoard.h"
 
 // Definitions
