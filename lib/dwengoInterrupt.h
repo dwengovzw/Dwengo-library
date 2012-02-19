@@ -20,7 +20,6 @@
 #ifndef DWENGO_INTERRUPT_H
 #define DWENGO_INTERRUPT_H
 
-#include <p18f4550.h> 
 #include "dwengoBoard.h"
 
 // Definitions
@@ -43,7 +42,9 @@ void initInterrupt(void);
  *
  * @param isr Function pointer to the iterrupt service routine that needs to be registered.
  */
-void registerISR(ISRpointer isr);
+#define registerISR(x) registerHighISR(x)
+void registerHighISR(ISRpointer isr);
+void registerLowISR(ISRpointer isr);
 
 /**
  * \brief Deregister an interrupt service routine
@@ -53,7 +54,9 @@ void registerISR(ISRpointer isr);
  *
  * @param isr Function pointer to the iterrupt service routine that needs to be deregistered.
  */
-void deregisterISR(ISRpointer isr);
+#define deregisterISR(x) derigisterHighISR(x)
+void deregisterHighISR(ISRpointer isr);
+void deregisterLowISR(ISRpointer isr);
 
 
 #endif // DWENGO_INTERRUPT_H

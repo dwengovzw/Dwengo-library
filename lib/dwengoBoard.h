@@ -75,7 +75,7 @@
 #define OUTPUT  0
 
 // Data types
-#define BYTE unsigned char
+typedef unsigned char BYTE;
 
 // Pin assignments
 

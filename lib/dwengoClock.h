@@ -20,7 +20,6 @@
 #ifndef DWENGO_CLOCK_H
 #define DWENGO_CLOCK_H
 
-#include <p18f4550.h> 
 #include "dwengoBoard.h"
 #include "dwengoInterrupt.h"
 #include "dwengoLCD.h"

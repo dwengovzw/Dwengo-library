@@ -19,7 +19,6 @@
 #ifndef DWENGO_TIMER_H
 #define DWENGO_TIMER_H
 
-#include <p18f4550.h> 
 #include "dwengoBoard.h"
 #include "dwengoInterrupt.h"
 #include "dwengoLCD.h"
