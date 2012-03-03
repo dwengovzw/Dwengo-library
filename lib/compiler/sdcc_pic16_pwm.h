@@ -7,7 +7,7 @@ union PWMCycle
 	struct {
 		unsigned int cycle:10;
 		unsigned char :4;
-	}
+	} input;
 	struct {
 		unsigned char high:8;
 		unsigned char low:2;
@@ -55,7 +55,7 @@ void OpenPWM1( char period )
 void OpenPWM2( char period )
 {
 	unsigned char TBLPTR_U, TBLPTR_L;
-	unsigned char __at(__CONFIG3H) config3h;
+	unsigned volatile char __at(__CONFIG3H) config3h;
 
 	TBLPTR_U = TBLPTRU;
 	TBLPTR_L = TBLPTRL;
@@ -63,7 +63,7 @@ void OpenPWM2( char period )
 	CCP2CONbits.DC2B0 = 1;
 	CCP2CONbits.DC2B1 = 1;
 
-	if (config3h & 0b00000001))
+	if (config3h & 0b00000001)
 		TRISCbits.TRISC1 = 0;
 	else
 		TRISBbits.TRISB3 = 0;
@@ -78,7 +78,7 @@ void SetDCPWM1(unsigned int dutycycle)
 {
 	union PWMCycle Cycle;
 
-	Cycle.cycle = dutycycle;
+	Cycle.input.cycle = dutycycle;
 	CCPR1L = Cycle.bytes.high;
 	CCP1CON = (CCP1CON & 0xCF) | (Cycle.bytes.low << 4);
 }
@@ -86,7 +86,7 @@ void SetDCPWM2(unsigned int dutycycle)
 {
 	union PWMCycle Cycle;
 
-	Cycle.cycle = dutycycle;
+	Cycle.input.cycle = dutycycle;
 	CCPR2L = Cycle.bytes.high;
 	CCP2CON = (CCP2CON & 0xCF) | (Cycle.bytes.low << 4);
 }
