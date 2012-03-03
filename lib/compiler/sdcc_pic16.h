@@ -39,5 +39,6 @@ void name() __interrupt 2;
 //USART
 #define putrsUSART(message) usart_puts(message)
 #define DataRdyUSART() usart_drdy()
+#define ReadUSART() usart_getc()
 
 #endif

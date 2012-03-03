@@ -55,7 +55,7 @@ void OpenPWM1( char period )
 void OpenPWM2( char period )
 {
 	unsigned char TBLPTR_U, TBLPTR_L;
-	unsigned volatile char __at(__CONFIG3H) config3h;
+	unsigned char config3h = *( (char *) __CONFIG3H );
 
 	TBLPTR_U = TBLPTRU;
 	TBLPTR_L = TBLPTRL;
