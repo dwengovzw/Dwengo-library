@@ -36,4 +36,8 @@ void name() __interrupt 2;
 #define SetChanADC(chan) adc_setchannel(chan)
 #define ADCCHAN(x) ADC_CHN_##x
 
+//USART
+#define putrsUSART(message) usart_puts(message)
+#define DataRdyUSART() usart_drdy()
+
 #endif
