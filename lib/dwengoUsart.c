@@ -96,7 +96,7 @@ void initUsartAdj(char bautrate) {
 }
 
 
-void printStringToUSART(const far rom char* message) {
+void printStringToUSART(const FAR_ROM char* message) {
   putrsUSART(message);
 }
 
