@@ -163,7 +163,7 @@ typedef unsigned char BYTE;
 #endif
 
 // include libraries
-#include <p18f4550.h>
+#include "compiler.h"
 #include "dwengoDelay.h"
 
 #ifndef NO_LCD

@@ -44,7 +44,7 @@
  *
  * @param message the NULL-terminated ASCII string to write
  */
-#define appendStringToLCD(message)   appendStringToLCD_((const far rom char*)(message))
+#define appendStringToLCD(message)   appendStringToLCD_((const FAR_ROM char*)(message))
 
 // Functions
 /**
@@ -102,7 +102,7 @@ void printCharToLCD(const char c, BYTE l, BYTE p);
  *
  * @param message the NULL-terminated ASCII string to write
  */
-void appendStringToLCD_(const far rom char* message);
+void appendStringToLCD_(const FAR_ROM char* message);
 /**
  * \brief Write a ROM string to a desired position on the LCD display
  *

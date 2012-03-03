@@ -125,8 +125,6 @@ void appendCharToLCD(const char c) {
 
 
 void printCharToLCD(const char c, BYTE l, BYTE p) {
-	BYTE temp;
-
 	// set cursor to selected position
 	setCursorLCD(l,p);
 
@@ -134,7 +132,7 @@ void printCharToLCD(const char c, BYTE l, BYTE p) {
 	appendCharToLCD(c);
 }
 
-void appendStringToLCD_(const far rom char* message) {
+void appendStringToLCD_(const FAR_ROM char* message) {
 	while (*message) {
 		appendCharToLCD(*message++);
 	}
@@ -156,8 +154,13 @@ void appendStringToLCDcharptr(char* message) {
 
 void appendIntToLCD(int i) {
   char buffer[7];
+#ifdef SDCC_pic16
+  //sdcc needs the radix as 3rd argument
+  itoa(i,buffer,10);
+#else
   itoa(i,buffer);
   buffer[6] = 0;
+#endif
   appendStringToLCDcharptr(buffer);
 }
 

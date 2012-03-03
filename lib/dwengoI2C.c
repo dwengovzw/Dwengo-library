@@ -78,7 +78,7 @@ int read2I2C(unsigned char addr) {
     val_high = readI2C(1);
   	val_low = readI2C(0);
     stopI2C();
-  	return ((unsigned int)val_high << 8L) | val_low;
+  	return ((unsigned int)val_high << 8) | val_low;
 }
 
 

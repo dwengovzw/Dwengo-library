@@ -1,3 +1,9 @@
 *.o
 *.lib
 *~
+*.lst
+
+#ignore automatic generated asm files
+#include needed asm files with !myfile.asm
+*.asm
+

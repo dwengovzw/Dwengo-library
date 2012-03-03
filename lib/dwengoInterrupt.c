@@ -11,30 +11,10 @@
 
 #include "dwengoInterrupt.h"
 
-void DwengoHighPriorityISR();
-void DwengoLowPriorityISR();
-
 ISRpointer highInterruptSlots[NMBR_ISR_SLOTS];
 ISRpointer lowInterruptSlots[NMBR_ISR_SLOTS];
 
-#pragma code high_vector=0x08
-void high_vector() {
-	_asm
-		goto DwengoHighPriorityISR
-	_endasm
-}
-#pragma code
-
-#pragma code low_vector=0x18
-void low_vector() {
-	_asm
-		goto DwengoLowPriorityISR
-	_endasm
-}
-#pragma code
-
-#pragma interrupt DwengoHighPriorityISR
-void DwengoHighPriorityISR() {
+HIGHINTERRUPT(DwengoHighPriorityISR) {
 	unsigned char i;
 
 	for (i=0; i<NMBR_ISR_SLOTS; i++) {
@@ -43,8 +23,7 @@ void DwengoHighPriorityISR() {
 	}
 }
 
-#pragma interruptlow DwengoLowPriorityISR
-void DwengoLowPriorityISR() {
+LOWINTERRUPT(DwengoLowPriorityISR) {
 	unsigned char i;
 
 	for (i=0; i<NMBR_ISR_SLOTS; i++) {
