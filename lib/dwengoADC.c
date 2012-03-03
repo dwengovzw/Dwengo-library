@@ -24,7 +24,11 @@ void initADC() {
     ADC_VREFPLUS_VDD and ADC_VREFMINUS_VSS: use PIC ground and source as voltage reference
     0b1010: pins AN0-AN4 configured as analog
   */
+#ifdef SDCC_pic16
+  adc_open(ADC_CHN_0, ADC_FOSC_64 | ADC_ACQT_6, ADC_CFG_5A, ADC_FRM_RJUST | ADC_INT_OFF | ADC_VCFG_VDD_VSS);
+#else
   OpenADC(ADC_FOSC_64 & ADC_RIGHT_JUST & ADC_6_TAD, ADC_CH0 & ADC_INT_OFF & ADC_VREFPLUS_VDD & ADC_VREFMINUS_VSS, 0b1010);   // Configuring ADC
+#endif
 }
 
 int readADC(BYTE address) {
@@ -32,11 +36,11 @@ int readADC(BYTE address) {
 
   // Choosing ADC channel (override ADC_CH0)
   switch(address) {
-    case 0: SetChanADC(ADC_CH0); break;
-    case 1: SetChanADC(ADC_CH1); break;
-    case 2: SetChanADC(ADC_CH2); break;
-    case 3: SetChanADC(ADC_CH3); break;
-    case 4: SetChanADC(ADC_CH4); break;
+    case 0: SetChanADC(ADCCHAN(0)); break;
+    case 1: SetChanADC(ADCCHAN(1)); break;
+    case 2: SetChanADC(ADCCHAN(2)); break;
+    case 3: SetChanADC(ADCCHAN(3)); break;
+    case 4: SetChanADC(ADCCHAN(4)); break;
     default: return -1;  // non existing channel
   }
 
