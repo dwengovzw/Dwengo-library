@@ -10,7 +10,28 @@
  */
 
 #include "dwengoDelay.h"
-
+#ifdef SDCC_pic16
+//fix problem with sdcc-sdcpp not inserting newlines in macros
+#define Nop()           do { __asm nop __endasm; } while(0)
+void delay_us(char a)
+{
+	Nop();
+	Nop();
+	Nop();
+	Nop();
+	Nop();
+	Nop();
+	while(--a) {
+		Nop();
+		Nop();
+		Nop();
+		Nop();
+		Nop();
+		Nop();
+		Nop();
+	}
+}
+#endif
 void delay_100us(int n) {
 	int i;
 	if (n != 0) {
@@ -24,10 +45,10 @@ void delay_100us(int n) {
 void delay_ms(int n){
 	int i;
 	if (n != 0) {
-		delay_us(94)
+		delay_us(94);
 		delay_100us(9);
 		for (i = 1; i<n; i++) {
-			delay_us(96)
+			delay_us(96);
 			delay_100us(9);
 		}
 	}

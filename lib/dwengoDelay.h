@@ -23,11 +23,16 @@
  *
  * @param n number (0-255) of microseconds to wait
  */
+#ifdef SDCC_pic16
+//fix problem with sdcc-sdcpp not inserting newlines in macros
+void delay_us(char a);
+
+#else
 #define delay_us(n)       \
 {	char a=n;  \
     _asm                  \
 	MOVLW a               \
-    MOVF PLUSW2, 1, 0     \
+	MOVF PLUSW2, 1, 0     \
 	BZ   12               \
 	DECF PLUSW2, 1, 0     \
 loop:                     \
@@ -44,7 +49,7 @@ loop:                     \
 	BRA  -11              \
 end:                      \
 	_endasm }
-
+#endif
 /**
  * \brief Delay in 100 microseconds
  *
