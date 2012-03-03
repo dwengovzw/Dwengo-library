@@ -125,8 +125,6 @@ void appendCharToLCD(const char c) {
 
 
 void printCharToLCD(const char c, BYTE l, BYTE p) {
-	BYTE temp;
-
 	// set cursor to selected position
 	setCursorLCD(l,p);
 

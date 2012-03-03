@@ -92,9 +92,7 @@ void irISR() {
 				if(SHORT_TIME) {
 					TMR3H = 0; // reset timer 3
 					TMR3L = 0;
-					if(bit_cnt == -1) {
-						rcState = ONE_BIT_DUMMY;
-					} else if(bit_cnt < NUMBER_OF_ADDRESS_BITS) {
+					if(bit_cnt < NUMBER_OF_ADDRESS_BITS) {
 						tmp_address += (1 << (NUMBER_OF_ADDRESS_BITS-1-bit_cnt));
 						rcState = ONE_BIT_DUMMY;
 					} else if(bit_cnt < (NUMBER_OF_COMMAND_BITS+NUMBER_OF_ADDRESS_BITS-1)) {

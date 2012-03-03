@@ -14,9 +14,6 @@ unsigned char readMAX11604(void);
 void writeMAX11604(unsigned char channel);
 
 void initSensorModule() {
-	unsigned char dummy;
-	unsigned int block_cnt;
-	
 	initI2C();
 	write1I2C(MAX11604_ADDRESS, 0b10000010);	// setup MAX11604
 }
