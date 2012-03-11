@@ -1,7 +1,7 @@
 /**
  * Interrupt
  * part of Dwengo library
- * 
+ *
  * Managing interupt service routines
  *
  * Version: 1.0.$Revision: 2121 $
@@ -13,6 +13,29 @@
 
 ISRpointer highInterruptSlots[NMBR_ISR_SLOTS];
 ISRpointer lowInterruptSlots[NMBR_ISR_SLOTS];
+
+#ifdef SDCC_pic16
+// SDCC automatically installs interrupt vectors when using HIGHINTERRUPT/LOWINTERRUPT
+#else
+#pragma code high_vector=0x08
+void high_vector() {
+       _asm
+               goto DwengoHighPriorityISR
+       _endasm
+}
+#pragma code
+
+#pragma code low_vector=0x18
+void low_vector() {
+       _asm
+               goto DwengoLowPriorityISR
+       _endasm
+}
+#pragma code
+
+#pragma interrupt DwengoHighPriorityISR
+#pragma interruptlow DwengoLowPriorityISR
+#endif
 
 HIGHINTERRUPT(DwengoHighPriorityISR) {
 	unsigned char i;
