@@ -16,6 +16,36 @@
  */
  
 // CPU Clock: 48MHz
+#ifdef SDCC_pic16
+#include <pic18fregs.h>
+
+__CONFIG(__CONFIG1L, _USBPLL_CLOCK_SRC_FROM_96MHZ_PLL_2_1L &
+                     _PLLDIV_DIVIDE_BY_5__20MHZ_INPUT__1L &
+                     _CPUDIV__OSC1_OSC2_SRC___1__96MHZ_PLL_SRC___2__1L);
+__CONFIG(__CONFIG1H, _OSC_HS__HS_PLL__USB_HS_1H &
+                     _FCMEN_OFF_1H &
+                     _IESO_OFF_1H);
+__CONFIG(__CONFIG2L, _VREGEN_ON_2L &
+                     _PUT_OFF_2L &
+                     _BODEN_OFF_2L &
+                     _BODENV_4_2V_2L);
+__CONFIG(__CONFIG2H, _WDT_DISABLED_CONTROLLED_2H &
+                     _WDTPS_1_32768_2H);
+__CONFIG(__CONFIG3H, _CCP2MUX_RC1_3H &
+                     _PBADEN_PORTB_4_0__CONFIGURED_AS_DIGITAL_I_O_ON_RESET_3H &
+                     _LPT1OSC_OFF_3H &
+                     _MCLRE_MCLR_ON_RE3_OFF_3H);
+__CONFIG(__CONFIG4L, _STVR_ON_4L &
+                     _LVP_OFF_4L &
+                     _ENHCPU_OFF_4L);
+__CONFIG(__CONFIG5L, _CP_0_OFF_5L);
+__CONFIG(__CONFIG5H, _CPD_OFF_5H);
+__CONFIG(__CONFIG6L, _WRT_0_OFF_6L);
+__CONFIG(__CONFIG6H, _WRTD_OFF_6H);
+__CONFIG(__CONFIG7L, _EBTR_0_OFF_7L);
+__CONFIG(__CONFIG7H, _EBTRB_OFF_7H);
+
+#else
 #pragma config   PLLDIV    =   5           // Divide by 5 (20 MHz oscillator input)
 #pragma config   FOSC      =   HSPLL_HS    // HS oscillator, PLL enabled, HS used by USB
 #pragma config   CPUDIV    =   OSC1_PLL2   // System Clock Postscaler Selection bits
@@ -67,3 +97,5 @@
 #pragma config   EBTR1     =   OFF         // Table Read Protection bit Block 1
 #pragma config   EBTR2     =   OFF         // Table Read Protection bit Block 2
 #pragma config   EBTR3     =   OFF         // Table Read Protection bit Block 3
+
+#endif

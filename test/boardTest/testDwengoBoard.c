@@ -3,6 +3,7 @@
 // Bootloader occupy addresses 0x00-0x1FFF and thus cannot be used.
 // Thus adresses 0x00, 0x08 and 0x18 (used for reset, high prior interrupt,
 // and low prior interrupt) have to be remapped.
+#ifdef BOOTLOADER
 extern void _startup(void);
 #pragma code REMAPPED_RESET_VECTOR = 0x2000
 void _reset(void) {
@@ -22,6 +23,7 @@ void _low_ISR (void)
 }
 
 #pragma code
+#endif
 
 
 
@@ -69,7 +71,7 @@ void main(void) {
 
 
   c=0;
-  printStringToUSART("Welcome 2 Dwengo!\n\r");
+  printStringToUSART( (FAR_ROM char *) "Welcome 2 Dwengo!\n\r");
   while (c!='!'){
     while(!DataRdyUSART());
       c = ReadUSART();

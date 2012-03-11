@@ -12,8 +12,7 @@
 // wait time to minimize transients in the motors when introducing abrupt speed changes, in ms
 #define TRANSIENT_DELAY 20
 
-#include <pwm.h>
-#include <timers.h>
+#include "compiler/pwm.h"
 
 #include "dwengoBoard.h"
 #include "dwengoMotor.h"

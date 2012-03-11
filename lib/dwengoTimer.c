@@ -19,7 +19,6 @@ unsigned long getTime() {
 
 unsigned long getCycles() {
   unsigned long L,H;
-  unsigned long result;
   L = TMR0L;
   H = TMR0H;
   return (time << 16)+(H << 8) + L;

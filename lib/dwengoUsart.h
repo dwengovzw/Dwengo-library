@@ -18,8 +18,9 @@
 #ifndef DWENGO_USART_H
 #define DWENGO_USART_H
 
-#include <usart.h>
 #include "dwengoBoard.h"
+// bug in usart.h needs the data->Data macro defined
+#include <usart.h>
 
 
 #define BAUD300    0
@@ -55,7 +56,7 @@ void initUsartAdj(char baudrate);
  *
  * @param message the NULL-terminated ASCII string to write
  */
-void printStringToUSART(const far rom char* message);
+void printStringToUSART(const FAR_ROM char* message);
 
 /**
  * \brief Write one byte to the USART

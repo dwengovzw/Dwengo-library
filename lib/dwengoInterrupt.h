@@ -24,7 +24,7 @@
 
 // Definitions
 #define NMBR_ISR_SLOTS 5
-typedef far rom void (*ISRpointer) (void);
+typedef FAR_ROM void (*ISRpointer) (void);
 
 // Functions
 /**
@@ -58,5 +58,7 @@ void registerLowISR(ISRpointer isr);
 void deregisterHighISR(ISRpointer isr);
 void deregisterLowISR(ISRpointer isr);
 
+HIGHINTDECLARE(DwengoHighPriorityISR)
+LOWINTDECLARE(DwengoLowPriorityISR)
 
 #endif // DWENGO_INTERRUPT_H
