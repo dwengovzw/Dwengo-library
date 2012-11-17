@@ -16,7 +16,7 @@
 ### along with Octave; see the file COPYING.  If not, see
 ### <http://www.gnu.org/licenses/>.
 
-AC_PREREQ([2.67])
+AC_PREREQ([2.65])
 
 AC_INIT([libdwengo], [1.0.0], [info@dwengo.org],, [www.dwengo.org])
 AM_INIT_AUTOMAKE
