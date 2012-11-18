@@ -14,7 +14,7 @@ program: $(TARGET) $(OBJECTS)
 	$(PK2) -F$(TARGET) $(PFLAGS)
 
 clean:
-	$(RM) *.o *.hex *.err
+	$(RM) *.o *.hex *.err *.i
 
 $(TARGET): $(OBJECTS)
 	$(MCC_L) $(LFLAGS) $< $(DWENGOLIB)/libdwengo.a -o $@

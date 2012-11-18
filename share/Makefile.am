@@ -1,5 +1,5 @@
 pkgdata_DATA = common.mk
-dist_pkgdata_DATA = Makefile.proj
+dist_pkgdata_DATA = Makefile.proj Makefile.topprojdir
 CLEANFILES = common.mk
 
 all: common.mk
