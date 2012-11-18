@@ -16,4 +16,4 @@
 ### along with Octave; see the file COPYING.  If not, see
 ### <http://www.gnu.org/licenses/>.
 
-SUBDIRS = lib examples
+SUBDIRS = lib share
