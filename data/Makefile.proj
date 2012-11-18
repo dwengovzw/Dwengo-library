@@ -1,0 +1,25 @@
+include ../common.mk
+
+SOURCES=$(wildcard *.c)
+OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
+TARGET=$(PROJECT).hex
+
+CFLAGS=-Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa- -p=18F4550 -i$(DWENGOLIB) -I$(DWENGOHEAD)
+LFLAGS=-q -u_CRUNTIME -p18F4550 -l$(MCC_LIB) -w
+PFLAGS=-PPIC18F4550 -M -T -R -B$(PK2_BIN)
+
+all: $(TARGET) $(OBJECTS)
+
+program: $(TARGET) $(OBJECTS)
+	$(PK2) -F$(TARGET) $(PFLAGS)
+
+clean:
+	$(RM) *.o *.hex *.err
+
+$(TARGET): $(OBJECTS)
+	$(MCC_L) $(LFLAGS) $< $(DWENGOLIB)/libdwengo.a -o $@
+
+%.o: %.c
+	$(MCC_C) $(CFLAGS) $< -fo=$@
+
+.PHONY: all program clean
