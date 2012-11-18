@@ -1,0 +1,35 @@
+SUBDIRS := ${shell ls -p |grep /$ | sed -e 's/\n/ /' -e 's/\// /'}
+
+include common.mk
+
+help:
+	@echo 'Run "make all" to compile all projects.'
+	@echo 'Run "make PROJ=<dir> program", with <dir> any of the following projects to program it.'
+	@echo ' '
+	@ls --color -1p | grep /$ | sed -e 's/^/"/' -e 's/\/$$/"/'
+	@echo ' '
+	@echo 'You can also run "make PROJ=<dir> all", to compile a specific project.'
+	@echo ' '
+
+all:
+	@if [ -z $(PROJECT) ]; then \
+	  for dir in $(SUBDIRS); do \
+	    $(MAKE) all -C $$dir; \
+	  done \
+	else \
+	 $(MAKE) all -C $(PROJECT); \
+	fi
+
+program:
+	$(MAKE) program -C $(PROJECT)
+
+clean:
+	@if [ -z $(PROJECT) ]; then \
+	  for dir in $(SUBDIRS); do \
+	    $(MAKE) clean -C $${dir}; \
+	  done \
+	else \
+	  $(MAKE) clean -C $(PROJECT); \
+	fi
+
+.PHONY: clean all program see
