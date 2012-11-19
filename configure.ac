@@ -46,7 +46,7 @@ fi
 #Search for location of mcc18
 if test -z "$MCC_BIN"; then
   true
-  # TODO: Search for mcc18, mplib and includes
+  # TODO: Search for mcc18, mplink and includes
 fi
 
 # Ensure that path to pk2cmd is given or given a warning (for programming).
@@ -105,6 +105,20 @@ if test "$MCC_L" != no; then
 fi
 AC_SUBST(MCCL_VERSION)
 
+AC_CHECK_PROG([MCC_LNK], [mplink], [${MCC_BIN}/mplink],[no],[${MCC_BIN}])
+### Check version number of mplink.
+LNK_VERSION=
+if test "$MCC_LNK" != no; then
+  mplink_version=`$MCC_LNK -? 2>&1 | grep "^MPLINK " | \
+    sed -e 's/^MPLINK //' -e 's/, Linker$//'`
+
+  AS_VERSION_COMPARE([$mplink_version], [4.40],
+    [AC_MSG_ERROR([mplink version $mplink_version will probably fail to compile libdwengo])])
+
+  LNK_VERSION=$mplink_version
+fi
+AC_SUBST(LNK_VERSION)
+
 AC_CHECK_PROG([PK2], [pk2cmd], [${PK2_BIN}/pk2cmd],[no],[${PK2_BIN}])
 ### Check version number of mplib.
 PK2_VERSION=
@@ -141,6 +155,9 @@ echo \
 
  Librarian........: $MCC_L
  Librarian.version: $MCCL_VERSION
+
+ Linker........: $MCC_LNK
+ Linker.version: $LNK_VERSION
 
  Device database version: $DEVDB_VERSION
 

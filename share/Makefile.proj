@@ -2,7 +2,12 @@ include ../common.mk
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
+
+ifeq "$(PROJECT)" ""
+TARGET=${shell pwd | sed -e 's/^.*\/\([A-Za-z0-9_]*\)$$/\1\.hex/'}
+else
 TARGET=$(PROJECT).hex
+endif
 
 CFLAGS=-Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa- -p=18F4550 -i$(DWENGOLIB) -I$(DWENGOHEAD)
 LFLAGS=-q -u_CRUNTIME -p18F4550 -l$(MCC_LIB) -w
@@ -17,7 +22,7 @@ clean:
 	$(RM) *.o *.hex *.err *.i
 
 $(TARGET): $(OBJECTS)
-	$(MCC_L) $(LFLAGS) $< $(DWENGOLIB)/libdwengo.a -o $@
+	$(MCC_LNK) $(LFLAGS) $< $(DWENGOLIB)/libdwengo.lib -o $@
 
 %.o: %.c
 	$(MCC_C) $(CFLAGS) $< -fo=$@

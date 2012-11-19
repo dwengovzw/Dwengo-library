@@ -12,6 +12,7 @@ common.mk: FORCE
 	@echo "MCC_LIB="$(MCC_LIB) >> common.mk
 	@echo "MCC_L="$(MCC_L) >> common.mk
 	@echo "MCC_C="$(MCC_C) >> common.mk
+	@echo "MCC_LNK="$(MCC_LNK) >> common.mk
 	@echo 'PROJECT = $${PROJ}' >> common.mk
 	@echo "export DWENGOLIB DWENGOHEAD PK2_BIN PK2 MCC_LIB MCC_L MCC_C PROJECT" \
 	                                                                  >> common.mk
