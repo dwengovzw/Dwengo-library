@@ -35,6 +35,7 @@ dwengoMotor.h \
 dwengoRC.h \
 dwengoSensorModule.h \
 dwengoServo.h \
+dwengoSound.h \
 dwengoTimer.h \
 dwengoUsart.h \
 compiler/mplabc18.h \
@@ -55,6 +56,7 @@ dwengoMotor.c \
 dwengoRC.c \
 dwengoSensorModule.c \
 dwengoServo.c \
+dwengoSound.c \
 dwengoTimer.c \
 dwengoUsart.c
 
