@@ -32,6 +32,7 @@ dwengoI2C.h \
 dwengoInterrupt.h \
 dwengoLCD.h \
 dwengoMotor.h \
+dwengoNotes.h \
 dwengoRC.h \
 dwengoSensorModule.h \
 dwengoServo.h \
