@@ -9,7 +9,7 @@ else
 TARGET=$(PROJECT).hex
 endif
 
-CFLAGS=-Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa- -p=18F4550 -i$(DWENGOLIB) -I$(DWENGOHEAD)
+CFLAGS=-Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa- -p=18F4550 -i$(DWENGOLIB) -I$(DWENGOHEAD) -I$(MCC_INCLUDE)
 LFLAGS=-q -u_CRUNTIME -p18F4550 -l$(MCC_LIB) -w
 PFLAGS=-PPIC18F4550 -M -T -R -B$(PK2_BIN)
 

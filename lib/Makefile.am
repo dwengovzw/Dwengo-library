@@ -18,7 +18,7 @@
 
 
 # mplink requieres a non-standerd library so we build it as a program
-pkglib_PROGRAMS = libdwengo.lib
+pkglibexec_PROGRAMS = libdwengo.lib
 
 nobase_pkginclude_HEADERS = \
 compiler.h \

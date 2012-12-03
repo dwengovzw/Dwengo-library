@@ -87,6 +87,8 @@ if test "$MCC_C" != no; then
 
   MCCC_VERSION=$mcc18_version
   DEVDB_VERSION=$devicedb_version
+else
+  AC_MSG_WARN([MCC18 not defined. Make sure that variable MCC_BIN is correct.])
 fi
 AC_SUBST(MCCC_VERSION)
 AC_SUBST(DEVDB_VERSION)
@@ -102,6 +104,8 @@ if test "$MCC_L" != no; then
     [AC_MSG_ERROR([mplib version $mplib_version will probably fail to compile libdwengo])])
 
   MCCL_VERSION=$mplib_version
+else
+  AC_MSG_WARN([MPLIB not defined. Make sure that variable MCC_BIN is correct.])
 fi
 AC_SUBST(MCCL_VERSION)
 
@@ -116,6 +120,8 @@ if test "$MCC_LNK" != no; then
     [AC_MSG_ERROR([mplink version $mplink_version will probably fail to compile libdwengo])])
 
   LNK_VERSION=$mplink_version
+else
+  AC_MSG_WARN([MPLINK not defined. Make sure that variable MCC_BIN is correct.])
 fi
 AC_SUBST(LNK_VERSION)
 
