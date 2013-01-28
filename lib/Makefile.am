@@ -17,10 +17,8 @@
 ### <http://www.gnu.org/licenses/>.
 
 
-### Replace RANLIB with custom one
-RANLIB = true
-
-pkglib_LIBRARIES = libdwengo.a
+# mplink requieres a non-standerd library so we build it as a program
+pkglibexec_PROGRAMS = libdwengo.lib
 
 nobase_pkginclude_HEADERS = \
 compiler.h \
@@ -34,9 +32,11 @@ dwengoI2C.h \
 dwengoInterrupt.h \
 dwengoLCD.h \
 dwengoMotor.h \
+dwengoNotes.h \
 dwengoRC.h \
 dwengoSensorModule.h \
 dwengoServo.h \
+dwengoSound.h \
 dwengoTimer.h \
 dwengoUsart.h \
 compiler/mplabc18.h \
@@ -44,7 +44,7 @@ compiler/pwm.h \
 compiler/sdcc_pic16.h \
 compiler/sdcc_pic16_pwm.h
 
-libdwengo_a_SOURCES = \
+libdwengo_lib_SOURCES = \
 dwengoADC.c \
 dwengoBluetooth.c \
 dwengoBoard.c \
@@ -57,6 +57,7 @@ dwengoMotor.c \
 dwengoRC.c \
 dwengoSensorModule.c \
 dwengoServo.c \
+dwengoSound.c \
 dwengoTimer.c \
 dwengoUsart.c
 
@@ -64,13 +65,7 @@ dwengoUsart.c
 .c.o:
 	$(MCC_C) $(MCCFLAGS) $<
 
-### Redefine library rule
-libdwengo.a: libdwengo.lib
-	mv libdwengo.lib $@
-
-libdwengo.lib: $(libdwengo_a_OBJECTS)
-	rm -f $@
+libdwengo.lib: $(libdwengo_lib_OBJECTS)
+	$(RM) $@
 	$(MCC_L) -q -c $@
-	$(MCC_L) -q -r $@ $(libdwengo_a_OBJECTS)
-
-.PHONY: libdwengo.lib
+	$(MCC_L) -q -r $@ $(libdwengo_lib_OBJECTS)

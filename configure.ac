@@ -26,14 +26,18 @@ AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_LIBOBJ_DIR([lib])
 
+#AC_CONFIG_FILES([examples/common.mk:examples/common.mk \
+#examples/Makefile.proj:examples/Makefile.proj])
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
 
-### Configure variables: MCC_BIN and MCC_INCLUDE.
+### Configure variables: MCC_BIN, MCC_INCLUDE and MCC_PROG
 AC_ARG_VAR([MCC_BIN], [The PATH wherein mcc18 and mplib can be found.])
 AC_ARG_VAR([MCC_INCLUDE], [The PATH wherein p18f4550.h can be found.])
+AC_ARG_VAR([PK2_BIN], [The PATH wherein pk2cmd can be found.])
 
-# Ensure that both or neither are specified.
+# Ensure that both or neither are specified (for compilation).
 if (test -n "$MCC_BIN" && test -z "$MCC_INCLUDE") || \
    (test -n "$MCC_INCLUDE" && test -z "$MCC_BIN"); then
   AC_MSG_ERROR([Specify both MCC18 and include paths, or neither.])
@@ -42,7 +46,18 @@ fi
 #Search for location of mcc18
 if test -z "$MCC_BIN"; then
   true
-  # TODO: Search for mcc18, mplib and includes
+  # TODO: Search for mcc18, mplink and includes
+fi
+
+# Ensure that path to pk2cmd is given or given a warning (for programming).
+if (test -z "$PK2_BIN"); then
+  AC_MSG_WARN([Path to PK2CMD not defined. Define PK2_BIN or "make program" wont work.])
+fi
+
+#Search for location of pk2cmd
+if test -z "$PK2_BIN"; then
+  true
+  # TODO: Search for pk2cmd
 fi
 
 AC_ARG_VAR([MCCFLAGS], [The FLAGS for mcc18.])
@@ -72,6 +87,8 @@ if test "$MCC_C" != no; then
 
   MCCC_VERSION=$mcc18_version
   DEVDB_VERSION=$devicedb_version
+else
+  AC_MSG_WARN([MCC18 not defined. Make sure that variable MCC_BIN is correct.])
 fi
 AC_SUBST(MCCC_VERSION)
 AC_SUBST(DEVDB_VERSION)
@@ -87,11 +104,48 @@ if test "$MCC_L" != no; then
     [AC_MSG_ERROR([mplib version $mplib_version will probably fail to compile libdwengo])])
 
   MCCL_VERSION=$mplib_version
+else
+  AC_MSG_WARN([MPLIB not defined. Make sure that variable MCC_BIN is correct.])
+fi
+AC_SUBST(MCCL_VERSION)
+
+AC_CHECK_PROG([MCC_LNK], [mplink], [${MCC_BIN}/mplink],[no],[${MCC_BIN}])
+### Check version number of mplink.
+LNK_VERSION=
+if test "$MCC_LNK" != no; then
+  mplink_version=`$MCC_LNK -? 2>&1 | grep "^MPLINK " | \
+    sed -e 's/^MPLINK //' -e 's/, Linker$//'`
+
+  AS_VERSION_COMPARE([$mplink_version], [4.40],
+    [AC_MSG_ERROR([mplink version $mplink_version will probably fail to compile libdwengo])])
+
+  LNK_VERSION=$mplink_version
+else
+  AC_MSG_WARN([MPLINK not defined. Make sure that variable MCC_BIN is correct.])
+fi
+AC_SUBST(LNK_VERSION)
+
+AC_CHECK_PROG([PK2], [pk2cmd], [${PK2_BIN}/pk2cmd],[no],[${PK2_BIN}])
+### Check version number of mplib.
+PK2_VERSION=
+FRM_VERSION="not found"
+if test "$PK2" != no; then
+  pk2_exec_version=`$PK2 -?V 2>&1 | grep "^Exec" | \
+    sed -e 's/^Executable Version:    //' -e 's/.00$//'`;
+  pk2_firm_version=`$PK2 -?V 2>&1 | grep "^OS" | \
+    sed -e 's/^OS Firmware Version:  //' -e 's/.00$//'`;
+
+  echo $PK2
+  AS_VERSION_COMPARE([$pk2_exec_version], [1.20],
+    [AC_MSG_ERROR([pk2cmd version $pk2_exec_version will probably fail to program the the dwengo board])])
+
+  PK2_VERSION=$pk2_exec_version
+  FRM_VERSION=$pk2_firm_version
 fi
 AC_SUBST(MCCL_VERSION)
 
 # Define library construction
-AC_CONFIG_FILES([Makefile lib/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile share/Makefile])
 
 AC_OUTPUT
 
@@ -108,7 +162,14 @@ echo \
  Librarian........: $MCC_L
  Librarian.version: $MCCL_VERSION
 
+ Linker........: $MCC_LNK
+ Linker.version: $LNK_VERSION
+
  Device database version: $DEVDB_VERSION
+
+ Programmer tool             : $PK2
+ Programmer tool version     : $PK2_VERSION
+ Programmer firmware version : $FRM_VERSION
 
  Now type 'make @<:@<target>@:>@'
    where the optional <target> is:
