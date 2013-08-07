@@ -1,68 +1,70 @@
+/** \file dwengoSound.h
+ *  \brief Sound library for Dwengo
+*/
+#ifndef DWENGOSOUND_H
+#define DWENGOSOUND_H
+
+#include "dwengoInterrupt.h"
+#include <math.h>
+
+
+#define SPEAKERPORT LATCbits.LATC2
+//struct
+
 /**
- * dwengoSound.h
- *
- * Routines to control speakers. Headers file
- *
- * Version: 1.0.0
- * Date:  Monday, November 26 2012
- *
- * Copyright (C) 2012 - Juan Pablo Carbajal
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * \struct note
+ * \brief datastructure to store a note.
  */
+typedef struct{
+    char pitch; /**<Character representation of the pitch of a note according the international music notation standard (A to G ). A lowercase letter is the flat of the equivalent uppercase note. There is no notation for sharp notes.*/
+    char octave; /**<Octave of the note, ranging from -1 to 4. 0 Beeing the octave in which A is 440hz. */
+    char duration; /**<Length of the note expressed in amount of sixteenth notes.*/
+} note;
+ // functions
 
-#ifndef DWENGO_SOUND_H
-#define DWENGO_SOUND_H
 
-#include "dwengoBoard.h"
-// #include "dwengoNotes.h"
-
-#define SOUND1_0            PORTCbits.RC2
-#define SOUND1_0_DIR        TRISCbits.TRISC2
-#define SOUND1_1            PORTAbits.RA4
-#define SOUND1_1_DIR        TRISAbits.TRISA4
-#define SOUND2_0            PORTCbits.RC1
-#define SOUND2_0_DIR        TRISCbits.TRISC1
-#define SOUND2_1            PORTBbits.RB3
-#define SOUND2_1_DIR        TRISBbits.TRISB3
-
-// Global variables
-extern unsigned char BEEP;
-extern unsigned char preloadTMR1L;
-extern unsigned char preloadTMR1H;
-extern unsigned short TMR0Count;
-extern unsigned char BEAT_SPEED;
-
-// Functions
-/**
- * \brief Initialize sound functionality
- *
+ /** \brief Initialize sound functionality.
  * This routine initializes sound functionality of the Dwengo board. It
- * configures the motor pins as digital outputs. It also configures timer0 and
- * timer1 and dispatches the sound interrupt service routine
- * using the dwengo interrupt librairy.
+ * configures the C pins as digital outputs. C2 is used as the speaker output.
+ * It also configures timer0 and timer1 and dispatches the sound interrupt service routine,
+ * using the dwengo interrupt library.
+ * Timer0 is the low interrupt timer. Its interrupts determine the rythm.
+ * Timer1 is the high interrupt timer. This one regulates the frequency of the notes.
+ **/
+void initSound(void);
+/**
+ * \brief Plays a song.
+ * @param song pointer to an array of notes.
+ * @param bpm the tempo of the song, expressed in beats per minute.
+ * Runs through an array of notes at a specified tempo. Each note encoutered
+ * will be played trough \a playFrequency for the specified amount of time.
  */
-void initSound (void);
-
-void soundISR ();
+void startSong(note* song, unsigned int bpm);
+/**
+ * \brief stops the timers, effectively stopping the sound.
+ */
+void stopSound(void);
 
 /**
- * \brief Plays a musical note
- *
- * TODO: write help
+ * \brief keeps generating a tone on the C2 pin untill \a stopSound() is called
+ * @param frequency desired frequency.
+ * This function generates a square wave on the C2 pin.
+ * Attaching a speaker to this pin will result in a audible tone.
  */
-void playNote (unsigned int note, unsigned int duration);
+void playFrequency(unsigned int frequency);
 
-#endif // DWENGO_SOUND_H
+/**
+ * \brief ISR that handles the frequency.
+ */
+void frequencyHighISR ();
+/**
+ * \brief ISR that handles the tempo.
+ */
+void beatLowISR ();
+/**
+ * \brief help function that returns the frequency of a note.
+ * @param Note input note of which the frequency must be determined.
+ */
+unsigned int noteFrequency(note Note);
+
+#endif
