@@ -8,7 +8,7 @@
 #include <math.h>
 
 
-#define SPEAKERPORT LATCbits.LATC2
+#define SPEAKERPORT LATCbits.LATC0
 //struct
 
 /**
@@ -25,7 +25,7 @@ typedef struct{
 
  /** \brief Initialize sound functionality.
  * This routine initializes sound functionality of the Dwengo board. It
- * configures the C pins as digital outputs. C2 is used as the speaker output.
+ * configures the C pins as digital outputs. C0 is used as the speaker output.
  * It also configures timer0 and timer1 and dispatches the sound interrupt service routine,
  * using the dwengo interrupt library.
  * Timer0 is the low interrupt timer. Its interrupts determine the rythm.
@@ -46,9 +46,9 @@ void startSong(note* song, unsigned int bpm);
 void stopSound(void);
 
 /**
- * \brief keeps generating a tone on the C2 pin untill \a stopSound() is called
+ * \brief keeps generating a tone on the C0 pin untill \a stopSound() is called
  * @param frequency desired frequency.
- * This function generates a square wave on the C2 pin.
+ * This function generates a square wave on the C0 pin.
  * Attaching a speaker to this pin will result in a audible tone.
  */
 void playFrequency(unsigned int frequency);

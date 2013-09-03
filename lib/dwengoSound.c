@@ -43,7 +43,7 @@ void initSound(void){
 
     PIR1bits.TMR1IF = 0; /*Timer 1 interrupt flag off*/
     INTCONbits.TMR0IF = 0; /*Timer 0 interrupt flag off*/
-    TRISC= 0x00;
+    TRISCbits.TRISC0 = 0; /*Configure RC0 as output*/
     delay_ms(1000);
 }
 void startSong(note* song, unsigned int bpm){
