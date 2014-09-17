@@ -40,6 +40,9 @@
 //#define RXLED0			//PORTB |= (1<<0)
 //#define RXLED1			//PORTB &= ~(1<<0)
 
+static const uint8_t RX = 0;
+static const uint8_t TX = 1;
+
 static const uint8_t SDA = 15;
 static const uint8_t SCL = 14;
 
