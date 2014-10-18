@@ -7,3 +7,7 @@
 #include needed asm files with !myfile.asm
 *.asm
 
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
+

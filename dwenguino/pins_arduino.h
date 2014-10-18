@@ -33,7 +33,7 @@
 #define NUM_DIGITAL_PINS  48
 #define NUM_ANALOG_INPUTS 8
 
-// No TX or RX led connected 
+// No TX or RX led connected
 //#define TX_RX_LED_INIT	//DDRD |= (1<<5), DDRB |= (1<<0)
 //#define TXLED0			//PORTD |= (1<<5)
 //#define TXLED1			//PORTD &= ~(1<<5)
@@ -46,7 +46,7 @@ static const uint8_t TX = 1;
 static const uint8_t SDA = 15;
 static const uint8_t SCL = 14;
 
-// Map SPI port to 'new' pins 
+// Map SPI port to 'new' pins
 static const uint8_t SS   = 10;
 static const uint8_t MOSI = 2;
 static const uint8_t MISO = 12;
@@ -54,14 +54,14 @@ static const uint8_t SCK  = 13;
 
 // Mapping of analog pins as digital I/O
 // A6-A11 share with digital pins
-static const uint8_t A0 = 24;
-static const uint8_t A1 = 25;
-static const uint8_t A2 = 26;
-static const uint8_t A3 = 27;
-static const uint8_t A4 = 28;
-static const uint8_t A5 = 29;
-static const uint8_t A6 = 30; 
-static const uint8_t A7 = 31;
+static const uint8_t A0 = 0;
+static const uint8_t A1 = 1;
+static const uint8_t A2 = 2;
+static const uint8_t A3 = 3;
+static const uint8_t A4 = 4;
+static const uint8_t A5 = 5;
+static const uint8_t A6 = 6;
+static const uint8_t A7 = 7;
 
 // Dwengo functionality
 // LEDs
@@ -294,7 +294,7 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
     NOT_ON_TIMER, // PD2 - D0  - RX1
     NOT_ON_TIMER, // PD3 - D1  - TX1
 
-    NOT_ON_TIMER, // PB2 - D2  - MOSI 
+    NOT_ON_TIMER, // PB2 - D2  - MOSI
     TIMER1C,      // PB7 - D3  -
 
     NOT_ON_TIMER, // PD7 - D4  -
@@ -354,13 +354,13 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 
 const uint8_t PROGMEM analog_pin_to_channel_PGM[] = {
   7,  // A0 PF7
-  6,  // A1 PF6 
-  5,  // A2 PF5 
+  6,  // A1 PF6
+  5,  // A2 PF5
   4,  // A3 PF4
-  3,  // A4 PF3 
-  2,  // A5 PF2   
-  1,  // A6 PD1 
-  0,  // A7 PD0 
+  3,  // A4 PF3
+  2,  // A5 PF2
+  1,  // A6 PD1
+  0,  // A7 PD0
 };
 
 #endif /* ARDUINO_MAIN */
