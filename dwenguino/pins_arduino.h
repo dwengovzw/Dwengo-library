@@ -3,7 +3,7 @@
   Part of the Dwengo library
 
   Originally made by David A. Mellis,
-  Adapted by Sam De Bodt, Jeller Roets and Francis wyffels from Dwengo vzw in 2014
+  Adapted by Sam De Bodt, Jelle Roets and Francis wyffels from Dwengo vzw in 2014
 
   Copyright (c) 2007 David A. Mellis
 
