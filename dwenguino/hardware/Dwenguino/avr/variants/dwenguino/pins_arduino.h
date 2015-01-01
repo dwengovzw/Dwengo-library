@@ -3,7 +3,6 @@
   Part of the Dwengo library
 
   Originally made by David A. Mellis,
-  Adapted by Sam De Bodt, Jelle Roets and Francis wyffels from Dwengo vzw in 2014
 
   Copyright (c) 2007 David A. Mellis
 
@@ -25,6 +24,15 @@
   $Id: wiring.h 249 2007-02-03 16:52:51Z mellis $
 */
 
+/*
+  Modified on Dec 20 2014 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+    Pin definition for dwenguino v2.0
+
+  TODO:
+    - make arduino core ready for AT90USB646  (wiring_private.h: EXTERNAL_NUM_INTERRUPTS, WInterrupts.c: define interrupts, Wiring )
+    - PB7: timer0A (8-bit) as well as timer1C(16-bit) however timer1C is not implemented in arduino IDE1.0, no problem in IDE1.5
+*/
+
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
@@ -33,12 +41,12 @@
 #define NUM_DIGITAL_PINS  48
 #define NUM_ANALOG_INPUTS 8
 
-// No TX or RX led connected
-//#define TX_RX_LED_INIT	//DDRD |= (1<<5), DDRB |= (1<<0)
-//#define TXLED0			//PORTD |= (1<<5)
-//#define TXLED1			//PORTD &= ~(1<<5)
-//#define RXLED0			//PORTB |= (1<<0)
-//#define RXLED1			//PORTB &= ~(1<<0)
+// No TX or RX led connected 
+#define TX_RX_LED_INIT	//DDRD |= (1<<5), DDRB |= (1<<0)
+#define TXLED0			//PORTD |= (1<<5)
+#define TXLED1			//PORTD &= ~(1<<5)
+#define RXLED0			//PORTB |= (1<<0)
+#define RXLED1			//PORTB &= ~(1<<0)
 
 static const uint8_t RX = 0;
 static const uint8_t TX = 1;
@@ -46,22 +54,24 @@ static const uint8_t TX = 1;
 static const uint8_t SDA = 15;
 static const uint8_t SCL = 14;
 
-// Map SPI port to 'new' pins
+// Map SPI port to 'new' pins 
 static const uint8_t SS   = 10;
 static const uint8_t MOSI = 2;
 static const uint8_t MISO = 12;
 static const uint8_t SCK  = 13;
 
 // Mapping of analog pins as digital I/O
-// A6-A11 share with digital pins
-static const uint8_t A0 = 0;
-static const uint8_t A1 = 1;
-static const uint8_t A2 = 2;
-static const uint8_t A3 = 3;
-static const uint8_t A4 = 4;
-static const uint8_t A5 = 5;
-static const uint8_t A6 = 6;
-static const uint8_t A7 = 7;
+static const uint8_t A0 = 24;
+static const uint8_t A1 = 25;
+static const uint8_t A2 = 26;
+static const uint8_t A3 = 27;
+static const uint8_t A4 = 28;
+static const uint8_t A5 = 29;
+static const uint8_t A6 = 30; 
+static const uint8_t A7 = 31;
+
+static const uint8_t BAND_GAP = 70; 
+static const uint8_t GROUND = 71; // = 31 - 8 + 48 (for more info see analog_pin_to_channel_PGM at the end of this file)
 
 // Dwengo functionality
 // LEDs
@@ -110,6 +120,16 @@ static const uint8_t LCD_D5 = 37;
 static const uint8_t LCD_D6 = 38;
 static const uint8_t LCD_D7 = 39;
 
+// External interrupts
+static const uint8_t D0_INT= 2;   // INT2 on PD2 - D0
+static const uint8_t D1_INT= 3;   // INT3 on PD3 - D1
+static const uint8_t D14_INT = 0; // INT0 on PD0 - D14
+static const uint8_t D15_INT = 1; // INT1 on PD1 - D15
+static const uint8_t D16_INT = 7; // INT7 on PE7 - D16
+static const uint8_t D17_INT = 6; // INT6 on PE6 - D17
+static const uint8_t D18_INT = 5; // INT5 on PE5 - D18
+static const uint8_t D19_INT = 4; // INT4 on PE4 - D19
+
 // PCINT 0-7 are on pins 6-13
 #define digitalPinToPCICR(p)    ( (((p) >= 6) && ((p) <= 13)) ? (&PCICR) : ((uint8_t *)0) )
 #define digitalPinToPCICRbit(p) 0
@@ -118,17 +138,6 @@ static const uint8_t LCD_D7 = 39;
 
 extern const uint8_t PROGMEM analog_pin_to_channel_PGM[];
 #define analogPinToChannel(P)  ( pgm_read_byte( analog_pin_to_channel_PGM + (P) ) )
-
-// Initialise Dwenguino board pins
-#define initDwengo() \
-{ \
-    LEDS_DIR = 0xFF;    \
-    DDRC = 0b01111111;  \
-    PORTC = 0b10000000; \
-    DDRE = 0b00001111;  \
-    PORTE = 0b11110000; \
-}
-
 
 #ifdef ARDUINO_MAIN
 
@@ -294,7 +303,7 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
     NOT_ON_TIMER, // PD2 - D0  - RX1
     NOT_ON_TIMER, // PD3 - D1  - TX1
 
-    NOT_ON_TIMER, // PB2 - D2  - MOSI
+    NOT_ON_TIMER, // PB2 - D2  - MOSI 
     TIMER1C,      // PB7 - D3  -
 
     NOT_ON_TIMER, // PD7 - D4  -
@@ -352,16 +361,110 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 
 };
 
+// Converts pinNumber to MUX channel bits (MUX4..0 datasheet p322)
+// First 48 definitions map digital IO pins to ADC channel: digital pins without ADC channel will be read as ground (MUX = 31),
+// last defintions can be used for special ADC commamds (like internal bandgap or differential ADC)
 const uint8_t PROGMEM analog_pin_to_channel_PGM[] = {
-  7,  // A0 PF7
-  6,  // A1 PF6
-  5,  // A2 PF5
-  4,  // A3 PF4
-  3,  // A4 PF3
-  2,  // A5 PF2
-  1,  // A6 PD1
-  0,  // A7 PD0
+    7, // readAnalog(0) => ADC7 (first 7 idices are not digital ports but number of analog channel)
+    6, // readAnalog(1) => ADC6 
+    5, // readAnalog(2) => ADC5 
+    4, // readAnalog(3) => ADC4  
+    3, // readAnalog(4) => ADC3 
+    2, // readAnalog(5) => ADC2 
+    1, // readAnalog(6) => ADC1 
+    0, // readAnalog(7) => ADC0
+
+    31, // PD5 - D8: readAnalog(8) => read as ground
+    31, // PD4 - D9  -
+    31, // PB0 - D10 - SS
+    31, // PB4 - D11 -
+    31, // PB3 - D12 - MISO
+    31, // PB1 - D13 - LED13  -  SCK
+    31, // PD0 - D14 - SCL
+    31, // PD1 - D15 - SDA
+
+    31, // PE7 - D16 - SW_N
+    31, // PE6 - D17 - SW_E
+    31, // PE5 - D18 - SW_S
+    31, // PE4 - D19 - SW_W
+    31, // PE3 - D20 - LCD_BL
+    31, // PE2 - D21 - LCD_E
+    31, // PE1 - D22 - LCD_RW
+    31, // PE0 - D23 - LCD_RS
+
+    7, // PF7 - D24 - A0: readAnalog(A0) => ADC7
+    6, // PF6 - D25 - A1: readAnalog(A1) => ADC6
+    5, // PF5 - D26 - A2: readAnalog(A2) => ADC5
+    4, // PF4 - D27 - A3: readAnalog(A3) => ADC4
+    3, // PF3 - D28 - A4: readAnalog(A4) => ADC3
+    2, // PF2 - D29 - A5: readAnalog(A5) => ADC2
+    1, // PF1 - D30 - A6: readAnalog(A6) => ADC1
+    0, // PF0 - D31 - A7: readAnalog(A7) => ADC0
+
+    31, // PA0 - D32 - LED0   - LCD_DB0
+    31, // PA1 - D33 - LED1   - LCD_DB1
+    31, // PA2 - D34 - LED2   - LCD_DB2
+    31, // PA3 - D35 - LED3   - LCD_DB3
+    31, // PA4 - D36 - LED4   - LCD_DB4
+    31, // PA5 - D37 - LED5   - LCD_DB5
+    31, // PA6 - D38 - LED6   - LCD_DB6
+    31, // PA7 - D39 - LED7   - LCD_DB7
+
+    31, // PC0 - D40 - SERVO_1
+    31, // PC1 - D41 - SERVO_2
+    31, // PC2 - D42 - 4A
+    31, // PC3 - D43 - 2A
+    31, // PC4 - D44 - 3A
+    31, // PC5 - D45 - 1A
+    31, // PC6 - D46 - BUZZER
+    31, // PC7 - D47 - SW_C
+
+    8, // array idx = 48: readAnalog(48) => (ADC0 / ADC0 / 10x)
+    9, 
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30, // array idx = 70: readAnalog(BAND_GAP) => Band gap 1.1V
+    31  // array idx = 71: readAnalog(GROUND)  => Ground 0V
 };
 
 #endif /* ARDUINO_MAIN */
+
+// These serial port names are intended to allow libraries and architecture-neutral
+// sketches to automatically default to the correct port name for a particular type
+// of use.  For example, a GPS module would normally connect to SERIAL_PORT_HARDWARE_OPEN,
+// the first hardware serial port whose RX/TX pins are not dedicated to another use.
+//
+// SERIAL_PORT_MONITOR        Port which normally prints to the Arduino Serial Monitor
+//
+// SERIAL_PORT_USBVIRTUAL     Port which is USB virtual serial
+//
+// SERIAL_PORT_LINUXBRIDGE    Port which connects to a Linux system via Bridge library
+//
+// SERIAL_PORT_HARDWARE       Hardware serial port, physical RX & TX pins.
+//
+// SERIAL_PORT_HARDWARE_OPEN  Hardware serial ports which are open for use.  Their RX & TX
+//                            pins are NOT connected to anything by default.
+#define SERIAL_PORT_MONITOR        Serial
+#define SERIAL_PORT_USBVIRTUAL     Serial
+#define SERIAL_PORT_HARDWARE       Serial1
+#define SERIAL_PORT_HARDWARE_OPEN  Serial1
+
 #endif /* Pins_Arduino_h */
