@@ -23,7 +23,7 @@ void loop() {
   
   dwenguinoLCD.clear();
   dwenguinoLCD.print("Value = ");
-  dwenguinoLCD.print(val);
+  dwenguinoLCD.print(1023-val);
 
   delay(100);
 }
