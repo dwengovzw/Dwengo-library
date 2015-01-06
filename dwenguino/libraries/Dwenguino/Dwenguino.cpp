@@ -169,6 +169,7 @@ SensorPanel::SensorPanel() {
 }
 
 void SensorPanel::init() {
+    initialised = true;
     Wire.begin();        // join i2c bus (address optional for master)
     writeMAX7320(B00000000);   // starting with lights out LD1 & LD2  off
     writeMAX11604(B10000010);
