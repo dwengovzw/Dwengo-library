@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------------
+ /* ---------------------------------------------------------------------------
 	Dwenguino Library - v2.0 
 	
 	Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
@@ -308,7 +308,7 @@ void IOBoard::init(void) {
     Wire.endTransmission();
     delayMicroseconds(200);
 }
-
+/*
 unsigned char IOBoard::readInputs_addr(unsigned char address) {
     unsigned char current_status = 0;
     if(!initialised)
@@ -325,7 +325,8 @@ unsigned char IOBoard::readInputs_addr(unsigned char address) {
         return current_status;
     }
 }
-
+*/
+/*
 void IOBoard::setOutputs_addr(unsigned char address, unsigned char output) {
     if(initialised) {
         if (address < 4) {
@@ -336,11 +337,31 @@ void IOBoard::setOutputs_addr(unsigned char address, unsigned char output) {
         }
     }
 }
-
+*/
 unsigned char IOBoard::readInputs() {
-    return readInputs_addr(0);
+    unsigned char current_status = 0;
+    if(!initialised)
+        return 0;
+    if (address < 4) {
+        Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+        Wire.write(0); // input0
+        Wire.endTransmission();
+        Wire.requestFrom((IO_ADDR|(address<<1))>>1,1);
+        if (1<= Wire.available())  // if there's a byte ready...
+            current_status = Wire.read(); // ...read current_status
+        return current_status;
+    }else{
+        return current_status;
+    }
 }
 
-void IOBoard::setOutputs(unsigned char out) {
-    setOutputs_addr(0, out);
+void IOBoard::setOutputs(unsigned char output) {
+    if(initialised) {
+        if (address < 4) {
+            Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+            Wire.write(3); // output1
+            Wire.write(output);
+            Wire.endTransmission();
+        }
+    }
 }

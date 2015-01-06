@@ -111,10 +111,10 @@ class IOBoard {
         IOBoard(void);
         IOBoard(unsigned char address);
         void init(void);
-        unsigned char readInputs_addr(unsigned char address);
-        void setOutputs_addr(unsigned char address, unsigned char output);
+        //unsigned char readInputs_addr(unsigned char address);
+        //void setOutputs_addr(unsigned char address, unsigned char output);
         unsigned char readInputs();
-        void setOutputs(unsigned char out);
+        void setOutputs(unsigned char output);
     private:
         unsigned char address;
         unsigned char initialised = false;

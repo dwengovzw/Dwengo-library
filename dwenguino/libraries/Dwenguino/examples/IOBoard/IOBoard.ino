@@ -17,7 +17,7 @@ void loop() {
   dwenguinoLCD.clear();
   dwenguinoLCD.print("IO status = ");
   io.setOutputs(B11110000);
-  dwenguinoLCD.print(io.readInputs_addr(0));
+  dwenguinoLCD.print(io.readInputs());
   delay(1000);
   io.setOutputs(B00001111);
   delay(1000);
