@@ -29,7 +29,6 @@
 // as well to add a compile include path to the library
 #include <LiquidCrystal.h>
 #include <Wire.h>
-//#include <Servo.h>
 
 // Say which 16 bit timers can be used and in what order
 //#define _useTimer1  0
@@ -54,6 +53,8 @@
 #define LD1   0
 #define LD2   1
 
+#define IO_ADDR 0x40
+
 // Classes
 // LCD
 class BufferedLCD : public LiquidCrystal {
@@ -75,7 +76,7 @@ extern BufferedLCD dwenguinoLCD;
 class Motors {
 public:
 	Motors(uint8_t motor1_PWM, uint8_t motor1_DIR, uint8_t motor2_PWM, uint8_t motor2_DIR);
-	void init();
+	void init(void);
 	void setSpeedMotor1(int speed);
 	void setSpeedMotor2(int speed);
 	void stopMotors();
@@ -89,8 +90,8 @@ private:
 // SensorPanel
 class SensorPanel {
 public:
-    SensorPanel(void);
-    void init();
+    SensorPanel();
+    void init(void);
     void setHeadlights(boolean, unsigned char);
     unsigned char readSensor(unsigned char, unsigned char); // modus: 0 difference mode, 1 ambient mode, 2 active mode
     void powerLongRange(unsigned char);
@@ -100,8 +101,24 @@ private:
     void writeMAX7320(unsigned char);
     unsigned char readMAX11604(void);
     void writeMAX11604(unsigned char);
+    unsigned char initialised = false;
 };
 //extern SensorPanel dwenguinoSensorPanel;
+
+// IOBoard
+class IOBoard {
+    public:
+        IOBoard(void);
+        IOBoard(unsigned char address);
+        void init(void);
+        unsigned char readInputs_addr(unsigned char address);
+        void setOutputs_addr(unsigned char address, unsigned char output);
+        unsigned char readInputs();
+        void setOutputs(unsigned char out);
+    private:
+        unsigned char address;
+        unsigned char initialised = false;
+};
 
 // Function prototypes
 void initDwenguino();

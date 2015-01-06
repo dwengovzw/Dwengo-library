@@ -8,6 +8,7 @@ void setup() {
   // put your setup code here, to run once:
   initDwenguino();
   sensorpanel = SensorPanel();
+  sensorpanel.init();
   sensorpanel.powerLongRange(true); // if you want to use the long range distance sensor, you need to activate it
 }
 

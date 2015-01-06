@@ -19,6 +19,7 @@
 * --------------------------------------------------------------------------- */
 
 #include "Dwenguino.h"
+#include <Wire.h>
 
 BufferedLCD dwenguinoLCD(LCD_RS, LCD_RW, LCD_E, LCD_D0, LCD_D1, LCD_D2, LCD_D3, LCD_D4, LCD_D5, LCD_D6, LCD_D7, &LEDS);
 //Motors dwenguinoMotors(MOTOR_1_0, MOTOR_1_1, MOTOR_1_0, MOTOR_1_1);
@@ -163,49 +164,56 @@ void Motors::stopMotors(){
 
 // SensorPanel class
 
-SensorPanel::SensorPanel(void) {
-    Wire.begin();        // join i2c bus (address optional for master)
-    Serial.begin(9600);  // start serial for
-    init();
+SensorPanel::SensorPanel() {
+    //Serial.begin(9600);
 }
 
 void SensorPanel::init() {
+    Wire.begin();        // join i2c bus (address optional for master)
     writeMAX7320(B00000000);   // starting with lights out LD1 & LD2  off
     writeMAX11604(B10000010);
 }
 
 unsigned char SensorPanel::readMAX7320() {
-    unsigned int current_status;
-    Wire.requestFrom(B1011000,1);  // ask 1 byte at the address
-    delayMicroseconds(200);
-    Serial.print(Wire.available());
-    if (1<= Wire.available())  // if there's a byte ready...
-        current_status = Wire.read(); // ...read current_status
+    unsigned int current_status = 0;
+    if(initialised) {
+        Wire.requestFrom(B1011000,1);  // ask 1 byte at the address
+        delayMicroseconds(200);
+        //Serial.print(Wire.available());
+        if (1<= Wire.available())  // if there's a byte ready...
+            current_status = Wire.read(); // ...read current_status
+    }
     return (unsigned char)current_status;
 }
 
 void SensorPanel::writeMAX7320(unsigned char dgrp) {
     // set I/O on channel of MAX7320
-    Wire.beginTransmission(B1011000); // transmit to device #4
-    Wire.write(dgrp);              // sends one byte
-    Wire.endTransmission();
+    if(initialised) {
+        Wire.beginTransmission(B1011000); // transmit to device #4
+        Wire.write(dgrp);              // sends one byte
+        Wire.endTransmission();
+    }
 }
 
 void SensorPanel::writeMAX11604(unsigned char channel) {
     // setup of MAX11604
     // setup of MAX11604
-    Wire.beginTransmission(B1100101);
-    Wire.write(B01100001|(channel*2));
-    Wire.endTransmission();
-    delayMicroseconds(200);
+    if(initialised) {
+        Wire.beginTransmission(B1100101);
+        Wire.write(B01100001|(channel*2));
+        Wire.endTransmission();
+        delayMicroseconds(200);
+    }
 }
 
 unsigned char SensorPanel::readMAX11604() {
-    unsigned int current_status;
-    Wire.requestFrom(B1100101,1);  // ask 1 byte at the address
-    Serial.print(Wire.available());
-    if (1<= Wire.available())  // if there's a byte ready...
-        current_status = Wire.read(); // ...read current_status
+    unsigned int current_status = 0;
+    if(initialised) {
+        Wire.requestFrom(B1100101,1);  // ask 1 byte at the address
+        //Serial.print(Wire.available());
+        if (1<= Wire.available())  // if there's a byte ready...
+            current_status = Wire.read(); // ...read current_status
+    }
     return (unsigned char)current_status;
 }
 
@@ -267,4 +275,71 @@ void SensorPanel::setHeadlights(boolean side,unsigned char state){
         else
             writeMAX7320( current_status&B10111111);              // sends one byte
     }
+}
+
+// IOBoard class
+
+IOBoard::IOBoard(void) {
+    this->address = 0;
+}
+
+IOBoard::IOBoard(unsigned char address) {
+    this->address = address;
+}
+
+void IOBoard::init(void) {
+    initialised = true;
+    Wire.begin();        // join i2c bus (address optional for master)
+    // Configure PCA9555
+    Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+    Wire.write(3); // output1
+    Wire.write(0);
+    Wire.endTransmission();
+    delayMicroseconds(200);
+    Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+    Wire.write(7); // config1
+    Wire.write(0); // output
+    Wire.endTransmission();
+    delayMicroseconds(200);
+    Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+    Wire.write(4); // polarity0
+    Wire.write(0xff); // invert_all_inputs
+    Wire.endTransmission();
+    delayMicroseconds(200);
+}
+
+unsigned char IOBoard::readInputs_addr(unsigned char address) {
+    unsigned char current_status = 0;
+    if(!initialised)
+        return 0;
+    if (address < 4) {
+        Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+        Wire.write(0); // input0
+        Wire.endTransmission();
+        Wire.requestFrom((IO_ADDR|(address<<1))>>1,1);
+        if (1<= Wire.available())  // if there's a byte ready...
+            current_status = Wire.read(); // ...read current_status
+        return current_status;
+    }else{
+        return current_status;
+    }
+}
+
+void IOBoard::setOutputs_addr(unsigned char address, unsigned char output) {
+    if(initialised) {
+        if (address < 4) {
+            Wire.beginTransmission((IO_ADDR|(address<<1))>>1);
+            Wire.write(3); // output1
+            Wire.write(output);
+            Wire.endTransmission();
+        }
+    }
+}
+
+unsigned char IOBoard::readInputs() {
+    return readInputs_addr(0);
+}
+
+void IOBoard::setOutputs(unsigned char out) {
+    setOutputs_addr(0, out);
 }
