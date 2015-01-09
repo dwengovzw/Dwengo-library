@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
 	Dwenguino Library - v2.0 
 	
-	Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
+	Created on Jan 09 2015 by Naveen Kuppuswamy from Dwengo vzw (www.dwengo.org)
 
 Motor.cpp - Library combining DC Motor control  and a Interrupt driven Servo library for Arduino using 16 bit timers- Version 2
  Copyright (c) 2009 Michael Margolis.  All right reserved.
@@ -25,7 +25,7 @@ Motor.cpp - Library combining DC Motor control  and a Interrupt driven Servo lib
 #include <avr/interrupt.h>
 #include <Arduino.h>
 
-#include "MotorAndServo.h"
+#include "DwenguinoMotor.h"
 
 static servo_t servos[MAX_SERVOS];                          // static array of servo structures
 static volatile int8_t Channel[_Nbr_16timers ];             // counter for the servo being pulsed for each timer (or -1 if refresh interval)

@@ -1,5 +1,7 @@
+#include <LiquidCrystal.h>
+#include <Wire.h>
 #include <Dwenguino.h>
-#include <Motor.h>
+#include <DwenguinoMotor.h>
 
 Motor servo1(SERVO_1);
 Motor dcMotor1(MOTOR_1_0, MOTOR_1_1);

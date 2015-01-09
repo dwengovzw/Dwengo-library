@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
 	Dwenguino Library - v2.0 
 	
-	Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
+	Created on Jan 09 2015 by Naveen Kuppuswamy from Dwengo vzw (www.dwengo.org)
 
 Motor.cpp - Library combining DC Motor control  and a Interrupt driven Servo library for Arduino using 16 bit timers- Version 2
  Copyright (c) 2009 Michael Margolis.  All right reserved.
@@ -139,7 +139,7 @@ class DCMotor{
 		DCMotor(uint8_t motor_PWM_pin, uint8_t motor_DIR_pin);
 		void init();
 		void setSpeed(int speed);
-		//void stopMotor();
+		//void stopMotor(); 
 	private:
 		uint8_t _motor_PWM, _motor_DIR;
     		int currentSpeed;
