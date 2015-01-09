@@ -20,7 +20,7 @@ void loop() {
     servo1.setCommand(pos);  // tell servo to go to position in variable 'pos' 
      delay(15); 
     
-    dcMotor1.setCommand(225);// set DC motor to rotate clockwise with constant velocity
+    dcMotor1.setCommand(225);// set DC motor to rotate clockwise with constant velocity, the maximal speed is 255
   } 
   
   for(pos = 180; pos>=0; pos-=3)     // goes from 180 degrees to 0 degrees 
@@ -28,6 +28,6 @@ void loop() {
     servo1.setCommand(pos);// tell servo to go to position in variable 'pos'  
     delay(15);         
 
-    dcMotor1.setCommand(-225);// set DC motor to rotate counter clockwise with constant velocity
+    dcMotor1.setCommand(-225);// set DC motor to rotate counter clockwise with constant velocity, the minimal speed is -255
  }   
 }
