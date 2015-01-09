@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <LiquidCrystal.h>
 #include <Dwenguino.h>
+#include <DwenguinoSensorPanel.h>
 
 SensorPanel sensorpanel;
 
@@ -21,7 +22,7 @@ void loop() {
   delay(200);
   
   dwenguinoLCD.setCursor(0, 0);
-  sensor = sensorpanel.readSensor(OS1,AMBIENT_MODE);
+  sensor = sensorpanel.readSensor(OS1,DIFF_MODE);
   dwenguinoLCD.print("Sensor OS1: ");
   dwenguinoLCD.print((int)sensor);
   dwenguinoLCD.setCursor(0, 1);

@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <LiquidCrystal.h>
 #include <Dwenguino.h>
+#include <DwenguinoIOBoard.h>
 
 // Please note that JP1-1 and JP1-2 must be set
 

@@ -15,11 +15,11 @@ void loop() {
   
   dwenguinoLCD.clear();
   dwenguinoLCD.print("Buttons = ");
-  if (digitalRead(SW_W) == LOW) dwenguinoLCD.print("West ");
-  if (digitalRead(SW_S) == LOW) dwenguinoLCD.print("South ");
-  if (digitalRead(SW_E) == LOW) dwenguinoLCD.print("East ");
-  if (digitalRead(SW_N) == LOW) dwenguinoLCD.print("North ");
-  if (digitalRead(SW_C) == LOW) dwenguinoLCD.print("Center ");
+  if (digitalRead(SW_W) == PRESSED) dwenguinoLCD.print("West ");
+  if (digitalRead(SW_S) == PRESSED) dwenguinoLCD.print("South ");
+  if (digitalRead(SW_E) == PRESSED) dwenguinoLCD.print("East ");
+  if (digitalRead(SW_N) == PRESSED) dwenguinoLCD.print("North ");
+  if (digitalRead(SW_C) == PRESSED) dwenguinoLCD.print("Center ");
 
   delay(500);
 

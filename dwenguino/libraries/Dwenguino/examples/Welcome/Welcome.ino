@@ -14,14 +14,15 @@ void setup() {
   dwenguinoLCD.print("Welcome to");
   dwenguinoLCD.setCursor(0,1);
   dwenguinoLCD.print("Dwenguino");
-  LEDS=0b10101010;
 }
 
 // the loop function runs over and over again forever
 void loop() {
   digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
+  LEDS=0b10101010;
   delay(1000);              // wait for a second
   digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
+  LEDS=0b01010101;
   delay(1000);              // wait for a second
 }
   

@@ -18,23 +18,35 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 * --------------------------------------------------------------------------- */
 
-#ifndef Dwenguino_h
-#define Dwenguino_h
+#ifndef DwenguinoLCD_h
+#define DwenguinoLCD_h
 
 #include <Arduino.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "DwenguinoLCD.h"
+// following libraries have to be included in main sketch before including Dwenguino.h
+// as well to add a compile include path to the library
+#include <LiquidCrystal.h>
 
-#define PRESSED 0
+// LCD
+class BufferedLCD : public LiquidCrystal {
+public:
+	BufferedLCD(uint8_t rs, uint8_t rw, uint8_t enable,
+		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+		uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7, volatile uint8_t* data);
+    /**
+    * \brief Clears the LCD display
+    */
+	void clear();
+    void backlightOn(void);
+    void backlightOff(void);
+	virtual size_t write(uint8_t);
+	void command(uint8_t);
 
-/**
- * \brief Initialize Dwenguino board
- *
- * Initialization routine for the Dwenguino board. Enables LEDS,
- * enables all switches and sets BUZZER. Additionally the LCD is initialized by this function.
- */
-void initDwenguino();
+private:
+	volatile uint8_t* _dataPort; 
+};
+extern BufferedLCD dwenguinoLCD;
 
 #endif

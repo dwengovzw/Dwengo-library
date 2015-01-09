@@ -5,7 +5,7 @@
 void setup() {
   // put your setup code here, to run once:
   initDwenguino();
-  lcd.print("hello");
+  dwenguinoLCD.print("hello");
 }
 
 void loop() {
