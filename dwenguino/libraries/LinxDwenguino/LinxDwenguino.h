@@ -18,7 +18,7 @@
 /****************************************************************************************
 **  Defines
 ****************************************************************************************/	
-#define DEVICE_NAME_LEN 17
+#define DEVICE_NAME_LEN 10
 
 #define NUM_AI_CHANS NUM_ANALOG_INPUTS
 #define AI_RES_BITS 10
@@ -44,9 +44,8 @@
 ****************************************************************************************/	
 #include "utility/LinxDevice.h"
 #include "utility/LinxWiringDevice.h"
-#include "utility/LinxArduino.h"
 	
-class LinxArduinoLeonardo : public LinxArduino
+class LinxDwenguino : public LinxWiringDevice
 {
 	public:	
 		/****************************************************************************************
@@ -89,9 +88,9 @@ class LinxArduinoLeonardo : public LinxArduino
 		/****************************************************************************************
 		**  Constructors /  Destructor
 		****************************************************************************************/
-		LinxArduinoLeonardo();
+		LinxDwenguino();
 		
-		~LinxArduinoLeonardo();
+		~LinxDwenguino();
 			
 		/****************************************************************************************
 		**  Functions
