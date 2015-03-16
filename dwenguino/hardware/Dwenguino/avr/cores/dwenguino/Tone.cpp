@@ -31,7 +31,12 @@ Version Modified By Date     Comments
 0007    M Sproul    10/08/29 Changed #ifdefs from cpu to register
 0008    S Kanemoto  12/06/22 Fixed for Leonardo by @maris_HY
 *************************************************/
+/*
+  Modified on Mar 16 2015 by Jelle Roets from Dwengo vzw (www.dwengo.org)
 
+  Changes made:
+    - use timer 3 for tone generation on AT90USB646
+*/
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "Arduino.h"
@@ -103,13 +108,30 @@ const uint8_t PROGMEM tone_pin_to_timer_PGM[] = { 2 /*, 1 */ };
 static uint8_t tone_pins[AVAILABLE_TONE_PINS] = { 255 /*, 255 */ };
 
 #elif defined(__AVR_ATmega32U4__)
- 
+  
 #define AVAILABLE_TONE_PINS 1
 #define USE_TIMER3
  
 const uint8_t PROGMEM tone_pin_to_timer_PGM[] = { 3 /*, 1 */ };
 static uint8_t tone_pins[AVAILABLE_TONE_PINS] = { 255 /*, 255 */ };
  
+#elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
+ 
+#define AVAILABLE_TONE_PINS 1
+
+#if defined(TONE_USE_TIMER3)
+  #define USE_TIMER3
+  const uint8_t PROGMEM tone_pin_to_timer_PGM[] = { 3 /*, 1 */ };
+#elif defined(TONE_USE_TIMER1)
+  #define USE_TIMER1
+  const uint8_t PROGMEM tone_pin_to_timer_PGM[] = { 1 /*, 1 */ };
+#else
+  #define USE_TIMER2
+  const uint8_t PROGMEM tone_pin_to_timer_PGM[] = { 2 /*, 1, 0 */ };
+#endif
+
+static uint8_t tone_pins[AVAILABLE_TONE_PINS] = { 255 /*, 255 */ };
+
 #else
 
 #define AVAILABLE_TONE_PINS 1
@@ -426,10 +448,17 @@ void disableTimer(uint8_t _timer)
   switch (_timer)
   {
     case 0:
-      #if defined(TIMSK0)
-        TIMSK0 = 0;
-      #elif defined(TIMSK)
-        TIMSK = 0; // atmega32
+      #if defined(TIMSK0) && defined(OCIE0A)
+        bitWrite(TIMSK0, OCIE0A, 0); // disable interrupt
+      #endif
+      #if defined(TCCR0A) && defined(WGM00)
+        TCCR0A = (1 << WGM00);
+      #endif
+      #if defined(TCCR0B) && defined(CS02)
+        TCCR0B = (TCCR0B & 0b11111000) | (1 << CS02);
+      #endif
+      #if defined(OCR0A)
+        OCR0A = 0;
       #endif
       break;
 
@@ -504,8 +533,10 @@ ISR(TIMER0_COMPA_vect)
   }
   else
   {
-    disableTimer(0);
-    *timer0_pin_port &= ~(timer0_pin_mask);  // keep pin low after stop
+
+    noTone(tone_pins[0]);
+    //disableTimer(0);
+    //*timer0_pin_port &= ~(timer0_pin_mask);  // keep pin low after stop
   }
 }
 #endif

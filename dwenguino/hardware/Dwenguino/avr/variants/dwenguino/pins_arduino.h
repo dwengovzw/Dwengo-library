@@ -48,6 +48,9 @@
 #define RXLED0			//PORTB |= (1<<0)
 #define RXLED1			//PORTB &= ~(1<<0)
 
+// Use timer 3 for Tone
+#define TONE_USE_TIMER3
+    
 static const uint8_t RX = 0;
 static const uint8_t TX = 1;
 
