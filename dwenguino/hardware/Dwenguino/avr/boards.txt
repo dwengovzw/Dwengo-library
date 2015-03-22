@@ -19,10 +19,9 @@ Dwenguino.upload.wait_for_upload_port=true
 
 Dwenguino.bootloader.tool=avrdude
 Dwenguino.bootloader.low_fuses=0xff
-Dwenguino.bootloader.high_fuses=0x9a
+Dwenguino.bootloader.high_fuses=0xda
 Dwenguino.bootloader.extended_fuses=0xfb
 Dwenguino.bootloader.path=dwenguino
-#Dwenguino.bootloader.path=caterina
 Dwenguino.bootloader.file=dwenguino/Caterina-Dwenguino.hex
 Dwenguino.bootloader.unlock_bits=0x3F
 Dwenguino.bootloader.lock_bits=0x2F
