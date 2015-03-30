@@ -42,7 +42,7 @@ void DCMotor::setSpeed(int speed){
     if (speed > 255) speed = 255;
     if (speed < -255) speed = -255;
     
-    if (speed > 0) {
+    if (speed >= 0) {
         if (currentSpeed < 0) {    // if speed abruptly changes rest 1 ms
             digitalWrite(_motor_DIR, LOW);
             analogWrite(_motor_PWM, 0);
