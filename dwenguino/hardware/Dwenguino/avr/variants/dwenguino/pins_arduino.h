@@ -37,6 +37,10 @@
 
 #include <avr/pgmspace.h>
 
+// Libraries control:
+#define TONE_USE_TIMER2         // Use timer 2 for Tone, You can also choose to use timer 1 or 3
+#define DISABLE_NEWPING_TIMER   // disable timer functionality of newpin library because they use same timer2 in CTC mode as tone function
+
 #define NUM_DIGITAL_PINS  48
 #define NUM_ANALOG_INPUTS 8
 
@@ -46,9 +50,6 @@
 #define TXLED1			//PORTD &= ~(1<<5)
 #define RXLED0			//PORTB |= (1<<0)
 #define RXLED1			//PORTB &= ~(1<<0)
-
-// Use timer 3 for Tone
-#define TONE_USE_TIMER3
     
 static const uint8_t RX = 0;
 static const uint8_t TX = 1;

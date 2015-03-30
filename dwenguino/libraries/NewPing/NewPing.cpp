@@ -103,6 +103,7 @@ boolean NewPing::ping_trigger() {
 }
 
 
+#if !defined(DISABLE_NEWPING_TIMER)
 // ---------------------------------------------------------------------------
 // Timer interrupt ping methods (won't work with ATmega8 and ATmega128)
 // ---------------------------------------------------------------------------
@@ -216,6 +217,7 @@ ISR(TIMER2_COMPA_vect) {
 	if(intFunc) intFunc(); // If wrapped function is set, call it.
 }
 
+#endif
 
 // ---------------------------------------------------------------------------
 // Conversion methods (rounds result to nearest inch or cm).
