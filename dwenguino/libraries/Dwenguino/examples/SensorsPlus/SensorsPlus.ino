@@ -34,7 +34,7 @@ void loop() {
 
   // Sonar
   if(digitalRead(SW_N) == LOW) {
-    unsigned int distance = sonar.ping() / US_ROUNDTRIP_CM;  // read sonar value: distance = uS / US_ROUNDTRIP_CM
+    unsigned int distance = sonar.ping_cm();  // read sonar value in cm
     dwenguinoLCD.clear();
     dwenguinoLCD.print("Sonar = ");
     dwenguinoLCD.print(distance);
