@@ -485,7 +485,11 @@ void disableTimer(uint8_t _timer)
 
 #if defined(TIMSK3)
     case 3:
-      TIMSK3 = 0;
+      bitWrite(TIMSK3, OCIE3A, 0);
+      TCCR3A = (1 << WGM30);
+      TCCR3B = (TCCR3B & 0b11111000) | (1 << CS31) | (1 << CS30);
+
+      OCR3A = 0;
       break;
 #endif
 
@@ -600,8 +604,9 @@ ISR(TIMER3_COMPA_vect)
   }
   else
   {
-    disableTimer(3);
-    *timer3_pin_port &= ~(timer3_pin_mask);  // keep pin low after stop
+    noTone(tone_pins[0]);
+    //disableTimer(3);
+    //*timer3_pin_port &= ~(timer3_pin_mask);  // keep pin low after stop
   }
 }
 #endif
