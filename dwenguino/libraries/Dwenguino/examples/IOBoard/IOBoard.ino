@@ -1,9 +1,11 @@
-#include <Wire.h>
 #include <LiquidCrystal.h>
+#include <Wire.h>
 #include <Dwenguino.h>
+
 #include <DwenguinoIOBoard.h>
 
 // Please note that JP1-1 and JP1-2 must be set
+// Pin 14 and 15 (I2C) are reserved for communication to the IOBoard
 
 IOBoard io(0);  // create an IOBoard object with address 0 (see jumper ADDRESS on Dwengo IO Board)
 

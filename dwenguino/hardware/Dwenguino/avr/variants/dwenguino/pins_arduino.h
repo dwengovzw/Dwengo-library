@@ -30,7 +30,6 @@
 
   TODO:
     - make arduino core ready for AT90USB646  (wiring_private.h: EXTERNAL_NUM_INTERRUPTS, WInterrupts.c: define interrupts, Wiring )
-    - PB7: timer0A (8-bit) as well as timer1C(16-bit) however timer1C is not implemented in arduino IDE1.0, no problem in IDE1.5
 */
 
 #ifndef Pins_Arduino_h

@@ -2,8 +2,8 @@
 // includes: Sonar , Temperature and humidity, Sound impact, Color
 
 // standard dwenguino libraries
-#include <Wire.h>
 #include <LiquidCrystal.h>
+#include <Wire.h>
 #include <Dwenguino.h>
 
 // sensor libraries

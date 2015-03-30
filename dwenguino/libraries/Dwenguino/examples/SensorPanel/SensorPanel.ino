@@ -1,9 +1,12 @@
-#include <Wire.h>
 #include <LiquidCrystal.h>
+#include <Wire.h>
 #include <Dwenguino.h>
+
 #include <DwenguinoSensorPanel.h>
 
 SensorPanel sensorpanel;
+
+// Pin 14 and 15 (I2C) are reserved for communication to the IOBoard
 
 void setup() {
   // put your setup code here, to run once:
