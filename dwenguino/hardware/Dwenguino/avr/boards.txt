@@ -28,6 +28,7 @@ Dwenguino.bootloader.lock_bits=0x2F
 
 Dwenguino.build.mcu=at90usb646
 Dwenguino.build.f_cpu=16000000L
+Dwenguino.build.board=AVR_DWENGUINO
 Dwenguino.build.vid=0xd3e0
 Dwenguino.build.pid=0x601a
 Dwenguino.build.usb_product="Dwenguino Board"
