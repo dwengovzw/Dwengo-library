@@ -13,8 +13,8 @@
 #include "dwengoRC.h"
 #include "dwengoLCD.h"
 
-#define RC_DIR TRISBbits.TRISB4
-#define RC_PIN PORTBbits.RB4
+#define RC_DIR TRISBbits.TRISB2
+#define RC_PIN PORTBbits.RB2
 
 #define START_OR_ERROR 0
 #define START_BITS 1
