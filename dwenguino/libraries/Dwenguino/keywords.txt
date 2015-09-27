@@ -5,25 +5,26 @@
 ###################################
 # Datatypes (KEYWORD1)
 ###################################
-IOBoard	KEYWORD1
-Motor KEYWORD1
-SensorPanel KEYWORD1
+IOBoard		KEYWORD1
+Motor		KEYWORD1
+SensorPanel	KEYWORD1
 
 ###################################
 # Methods and Functions (KEYWORD2)
 ###################################
 initDwenguino	KEYWORD2
 
-readInputs KEYWORD2
-setOutputs KEYWORD2
+readInputs		KEYWORD2
+setOutputs		KEYWORD2
 
-backlightOn KEYWORD2
-backlightOff KEYWORD2
+backlightOn		KEYWORD2
+backlightOff	KEYWORD2
 
-setHeadlights KEYWORD2
-readSensor KEYWORD2
-powerLongRange KEYWORD2
+setHeadlights	KEYWORD2
+readSensor		KEYWORD2
+powerLongRange	KEYWORD2
 
-###################################
-# Constants (LITERAL1)
-###################################
+#######################################
+# Instances (KEYWORD2)
+#######################################
+dwenguinoLCD	KEYWORD2
