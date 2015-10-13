@@ -17,10 +17,10 @@
           "help": {
             "online": "http://www.dwengo.org/tutorials"
           },
-          "url": "https://github.com/dwengovzw/Dwengo-library/raw/Automatic-installation-by-arduino-board-manager/dwenguino/Dwenguino_auto.zip",
-          "archiveFileName": "Dwenguino_auto.zip",
-          "checksum": "SHA-256:9624277B0DA88F32BA620C75CFD5339EBE534F0E3AE0C00802044AE02721E9BF",
-          "size": "254634",
+          "url": "http://www.dwengo.org/sites/default/files/Dwenguino.zip",
+          "archiveFileName": "Dwenguino.zip",
+          "checksum": "SHA-256:18FDB829D8591C0B656DFBAA03F775266ECFAD5CBB99203B942CA82A1D526B19",
+          "size": "254686",
           "boards": [
             {"name": "Dwenguino"}
           ],
