@@ -24,6 +24,7 @@ void loop() {
   sensorpanel.setHeadlights(LD2,false);
   delay(200);
   
+  dwenguinoLCD.clear();
   dwenguinoLCD.setCursor(0, 0);
   sensor = sensorpanel.readSensor(OS1,DIFF_MODE);
   dwenguinoLCD.print("Sensor OS1: ");

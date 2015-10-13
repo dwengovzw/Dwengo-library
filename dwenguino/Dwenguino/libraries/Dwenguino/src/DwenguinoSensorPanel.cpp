@@ -1,7 +1,7 @@
  /* ---------------------------------------------------------------------------
-	Dwenguino Library - v2.0 
-	
-	Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
+    Dwenguino Library - v2.0 
+    
+    Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@
 #include "DwenguinoSensorPanel.h"
 #include <Wire.h>
 
+#define MAX11604_ADDRESS B1100101   // Note arduino library uses 7 bit addresses
+#define MAX7320_ADDRESS  B1011000
+
 // SensorPanel class
 SensorPanel::SensorPanel() {
 
@@ -30,55 +33,50 @@ void SensorPanel::init() {
     initialised = true;
     Wire.begin();        // join i2c bus (address optional for master)
     writeMAX7320(B00000000);   // starting with lights out LD1 & LD2  off
-    writeMAX11604(B10000010);
+    Wire.beginTransmission(MAX11604_ADDRESS);
+    Wire.write(B10000010);  // setup MAX11604
+    Wire.endTransmission();
 }
 
-unsigned char SensorPanel::readMAX7320() {
-    unsigned int current_status = 0;
+int SensorPanel::readMAX7320() {
+    int current_status = -1;
     if(initialised) {
-        Wire.requestFrom(B1011000,1);  // ask 1 byte at the address
-        delayMicroseconds(200);
-        //Serial.print(Wire.available());
-        if (1<= Wire.available())  // if there's a byte ready...
-            current_status = Wire.read(); // ...read current_status
+        unsigned char bytesRead = Wire.requestFrom(MAX7320_ADDRESS, 1);  // ask 1 byte at the address
+        if (bytesRead == 1)  current_status = Wire.read(); // read current_status
     }
-    return (unsigned char)current_status;
+    return current_status;
 }
 
 void SensorPanel::writeMAX7320(unsigned char dgrp) {
     // set I/O on channel of MAX7320
     if(initialised) {
-        Wire.beginTransmission(B1011000); // transmit to device #4
+        Wire.beginTransmission(MAX7320_ADDRESS); // transmit to device #4
         Wire.write(dgrp);              // sends one byte
         Wire.endTransmission();
     }
 }
 
 void SensorPanel::writeMAX11604(unsigned char channel) {
-    // setup of MAX11604
-    // setup of MAX11604
     if(initialised) {
-        Wire.beginTransmission(B1100101);
+        Wire.beginTransmission(MAX11604_ADDRESS);
         Wire.write(B01100001|(channel*2));
         Wire.endTransmission();
         delayMicroseconds(200);
     }
 }
 
-unsigned char SensorPanel::readMAX11604() {
-    unsigned int current_status = 0;
+int SensorPanel::readMAX11604() {
+    int current_status = -1;
     if(initialised) {
-        Wire.requestFrom(B1100101,1);  // ask 1 byte at the address
-        //Serial.print(Wire.available());
-        if (1<= Wire.available())  // if there's a byte ready...
-            current_status = Wire.read(); // ...read current_status
+        unsigned char bytesRead = Wire.requestFrom(MAX11604_ADDRESS, 1);  // ask 1 byte at the address
+        if (bytesRead == 1)  current_status = Wire.read(); // read current_status
     }
-    return (unsigned char)current_status;
+    return current_status;
 }
 
-unsigned char SensorPanel::readSensor(unsigned char sensor, unsigned char modus) {
-    unsigned char ambient = 0;
-    unsigned char active = 0;
+int SensorPanel::readSensor(unsigned char sensor, unsigned char modus) {
+    int ambient = 0;
+    int active = 0;
     unsigned char dgrp;
     unsigned char current_status;
     
@@ -96,18 +94,16 @@ unsigned char SensorPanel::readSensor(unsigned char sensor, unsigned char modus)
     current_status = readMAX7320();
     writeMAX7320(current_status|dgrp); // activate sensor and keep status of lights ok
     
-    writeMAX11604(sensor);	// set channel
+    writeMAX11604(sensor);  // set channel
     active = readMAX11604();
     
-    writeMAX7320(current_status);	// reset status
+    writeMAX7320(current_status);   // reset status
     
-    if(modus == ACTIVE_MODE)
-        return active;
+    if(modus == ACTIVE_MODE) return active;
     
-    if(active > ambient)
-        return active-ambient;
-    else
-        return ambient-active;
+    if (active == -1 || ambient == -1) return -1;
+    if (active > ambient) return active-ambient;
+    else return ambient-active;
 }
 
 void SensorPanel::powerLongRange(unsigned char state) {

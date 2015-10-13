@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
-	Dwenguino Library - v2.0 
-	
-	Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
+    Dwenguino Library - v2.0 
+    
+    Created on Dec 20 2014 by Jelle Roets and Francis wyffels from Dwengo vzw (www.dwengo.org)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,9 @@
 #include <Wire.h>
 
 // Defines
-#define DIFF_MODE 	0	// eliminate ambient light
-#define AMBIENT_MODE 	1	// read ambient light
-#define ACTIVE_MODE	2	// read raw sensor data
+#define DIFF_MODE   0   // eliminate ambient light
+#define AMBIENT_MODE    1   // read ambient light
+#define ACTIVE_MODE 2   // read raw sensor data
 
 #define OS1   0
 #define OS2   1
@@ -70,13 +70,13 @@ public:
     /**
      * \brief Read one of the sensors from the module
      *
-     * Returns value corresponding with the sensor
+     * Returns value corresponding with the sensor, returns -1 if an error occured
      *
      * @param sensor Choose the sensor. Can be OSx, where x is the number of the sensor you want.
      * @param modus  Choose the measuring modus. Can be: DIFF_MODE, AMBIENT_MODE or ACTIVE_MODE
      
      */
-    unsigned char readSensor(unsigned char, unsigned char); // modus: 0 difference mode, 1 ambient mode, 2 active mode
+    int readSensor(unsigned char, unsigned char); // modus: 0 difference mode, 1 ambient mode, 2 active mode
     
     /**
      * \brief Set the power of the long range distance sensor
@@ -86,9 +86,9 @@ public:
     void powerLongRange(unsigned char);
     
 private:
-    unsigned char readMAX7320(void);
+    int readMAX7320(void);
     void writeMAX7320(unsigned char);
-    unsigned char readMAX11604(void);
+    int readMAX11604(void);
     void writeMAX11604(unsigned char);
     unsigned char initialised = false;
 };
