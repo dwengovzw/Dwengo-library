@@ -102,6 +102,14 @@ macros for various attributes; using the macros instead does not cause problems
 with doxygen.
 */
 
+/*
+* Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+*   Bootloader for Dwenguino
+*
+* Changes made:
+*   - hold SW_S while pressing and releasing reset to enter bootloader
+*   
+*/
 #define INCLUDE_FROM_KATIANA_C
 #include "Katiana.h"
 
@@ -206,7 +214,7 @@ This is used to time certain behaviors in the bootloader.
 timeout ticks are  at 25Hz, 40ms per tick. 
 8 seconds = 200 ticks, 760ms = 19 ticks, etc
 */
-static volatile uint8_t timeout ATTR_NO_INIT;
+static volatile uint16_t timeout ATTR_NO_INIT;
 
 #if !defined(__DOXYGEN__)
 #define TIMEOUT_PERIOD			    200
@@ -275,7 +283,7 @@ void
     originalBootKey = bootKey;
 }
 
-static void SetTimeout(uint8_t howLong)
+static void SetTimeout(uint16_t howLong)
 {
     cli();
     timeout = howLong;
@@ -354,14 +362,11 @@ static void inline SketchStartLogic(void)
     //
     // Power-on and brown-out resets will always cause the sketch to load immediately.
     //
-    uint8_t pwrReset = initialMCUSR & (_BV(PORF) | _BV(BORF));
-
-    if (pwrReset)
-    {	
+    if (initialMCUSR & (_BV(PORF) | _BV(BORF))) {	
         StartSketch();
     } 
     //
-    // if the boot key is active, the don't run the sketch...
+    // if the boot key is active, then don't run the sketch...
     //
     uint8_t booty = originalBootKey - BOOT_KEY;
     if (! booty) return;
@@ -370,27 +375,23 @@ static void inline SketchStartLogic(void)
     // special behaviors only occur with external and WDT resets. All others
     // will fail the following chesks and return to run the bootloader.
     //
-    if ( initialMCUSR & _BV(EXTRF) )
-    {
+    if ( initialMCUSR & _BV(EXTRF) ) {
+
+#if defined (BOOTENTER_SWITCH)
+        if (BOOTSW_pressed()) return;
+#endif
+
+#if defined (BOOTENTER_DOUBLERESET)
         // make the boot key active so that another external reset within the 750ms
         // window will cause the boot loader to run instead of winding up here again.
-        bootKey = BOOT_KEY; 
-        //
-        // setup a 750ms timeout
-        //
-        SetTimeout( EXT_RESET_TIMEOUT_PERIOD ); // this will enable interrupts too
-        //
         // This is a 750ms window in which the user can generate an external reset.
         // That will force the boot loader to run, instead of us starting the sketch
         // If the 750ms period expires with no external reset, the bootloader will run
-        //
-        while (timeout);
-        //
-        // timeout expired without another external reset, so we can load the sketch now.
-        // init code for the sketch will overwrite the bootKey with a return address,
-        // so we don't need to inactivate it here...
-        //
-        // bootKey = 0;			// set the bootKey back to inactive. 
+
+        bootKey = BOOT_KEY; 
+        _delay_ms(EXT_RESET_TIMEOUT_PERIOD);
+#endif
+        bootKey = 0;
         StartSketch();
     } 
     //
@@ -475,7 +476,12 @@ main(void)
     //
     SetupNormalHardware();
 
-    SetTimeout( TIMEOUT_PERIOD );
+#if defined (BOOTENTER_SWITCH)
+    if (BOOTSW_pressed()) SetTimeout( TIMEOUT_EXT );
+    else SetTimeout( TIMEOUT );
+#else
+    SetTimeout( TIMEOUT );
+#endif
     //
     // timeout only decrements when there's a sketch loaded, so this loop
     // runs forever until someone loads page address zero
@@ -527,6 +533,12 @@ static void SetupMinimalHardware(void)
     //
     CLKPR = _BV(CLKPCE);
     CLKPR = SYSTEM_CLOCK_PRESCALE;
+
+    // Setup switches as input with pull-up
+#if defined(BOOTENTER_SWITCH)
+    BOOTSW_init();
+    _delay_ms(1);
+#endif
 }
 
 /**

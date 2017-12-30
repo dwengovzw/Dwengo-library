@@ -72,7 +72,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 * Changes made:
 *   - use Dwengo USB VID and PID
-*   
+*   - add Bootloader enter modes
 */
 
 #pragma once
@@ -85,11 +85,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 	#define ENABLE_SECURITY_CHECKS
 
-//
-// Use these if you want da blinky lights...
-//
-	#define LED_START_FLASHES   0
-	#define LED_DATA_FLASHES
+// Enter bootloader by doubleclick reset
+  // #define BOOTENTER_DOUBLERESET
+// Enter bootloader mode by holding a button while pressing and releasing reset: available buttons: SWC, SWN, SWE, SWS, SWW
+  #define BOOTENTER_SWITCH
+  #define BOOT_SWS 
+
 //
 // To have a custom USB serial number reported:
 //

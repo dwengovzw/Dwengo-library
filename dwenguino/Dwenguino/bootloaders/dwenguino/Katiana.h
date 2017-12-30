@@ -85,7 +85,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "KatianaSPM.h"
 
 #include <LUFA/Drivers/USB/USB.h>
-#include <LUFA/Drivers/Board/LEDs.h>
+#include <LUFA/Drivers/Board/Board.h>
 #include <LUFA/Platform/Platform.h>
 
 #if !defined(LED_START_FLASHES)
