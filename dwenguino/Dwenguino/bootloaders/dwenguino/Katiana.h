@@ -88,10 +88,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <LUFA/Drivers/Board/Board.h>
 #include <LUFA/Platform/Platform.h>
 
-#if !defined(LED_START_FLASHES)
-#define LED_START_FLASHES 0
-#endif
-
 /* Preprocessor Checks: */
 #if !defined(__OPTIMIZE_SIZE__)
 #error This bootloader requires that it be optimized for size, not speed, to fit into the target device. Change optimization settings and try again.
@@ -170,33 +166,6 @@ enum AVR109_Commands
     AVR109_COMMAND_ExitBootloader           = 'E',
 };
 
-/** 
-  A few calculations to get Timer1 generating compare match interrupts
-  at a 25Hz rate. 
- 
-  Timer1 is used to handle bootloader timeout. This is used in normal count up
-  mode with a compare-match interrupt to get the desired interrupt rate of 25Hz.
- 
-  First we find the smallest pre-scaler setting that will require a compare
-  match value of 60,000 or less. This formula accomplishes that:
- 		    DIV = F_CPU / 1,500,000. 
- 
-  Now choose the smallest prescaler value which is >= DIV. With available ratios of
-  1, 8, 64, 256, 1024, the required tick count for compare match will always be
-  at least 7500 meaning the interval is very close to what's desired.
-  For F_CPU < 187.5kHz, the compare match will drop below 7500, but even with
-  a 32kHz clock we still have a compare match of 1300 counts. Good enough.
- 
-  Lastly, compute required timer count to reach 40msec:
- 		    CNT = F_CPU / Prescale / 25 Hz
- 
-  This is all done in macros so we don't waste any code space.
-*/
-#define DIV_25HZ	    (F_CPU / 1500000)
-#define DIV_ACTUAL_25HZ	    ( (DIV_25HZ <= 1) ? 1 : ( (DIV_25HZ <= 8) ? 8 : ( (DIV_25HZ <= 64) ? 64 : ( (DIV_25HZ <= 256) ? 256 : 1024 ) ) ) )
-#define TCCR1B_CS_25HZ	    ( (DIV_25HZ <= 1) ? 1 : ( (DIV_25HZ <= 8) ? 2 : ( (DIV_25HZ <= 64) ?  3 : ( (DIV_25HZ <= 256) ?  4 :     5 ) ) ) )
-#define TICK_COUNT_25HZ	    ( F_CPU / DIV_ACTUAL_25HZ / 25 - 1 )
-
 /* Bit mask to extract only the page start address from a flash address */
 #define SPM_PAGEMASK (~(SPM_PAGESIZE-1))
 
@@ -264,11 +233,12 @@ static void       CdcSendByte(const uint8_t Response);
 static void ReadWriteMemoryBlock(const uint8_t Command);
 #endif
 
-static void __attribute__((noinline)) SetTimeout(uint8_t);
+static void __attribute__((noinline)) SetTimeout(uint16_t);
 static void __attribute__((noinline)) BootRwwEnable(void);
 static void __attribute__((noinline)) ExecuteSPM( uint8_t );
  __attribute__((noinline)) static void IncrementAddress(void);
 static void  __attribute__((noinline)) WriteProgmemArray(const uint8_t*, uint8_t);
+static void __attribute__((noinline)) flashLed(void);
 
 /** 
 Function which grabs at most one AVR-910 command and fully processes it

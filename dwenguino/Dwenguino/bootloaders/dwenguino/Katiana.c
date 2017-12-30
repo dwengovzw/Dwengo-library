@@ -108,6 +108,8 @@ with doxygen.
 *
 * Changes made:
 *   - hold SW_S while pressing and releasing reset to enter bootloader
+*   - change timing behaviour: timer 1 now runs at 1kHz
+*   - add LED13 animation: led fades in and out during bootloader idle time and flashes on data transfer
 *   
 */
 #define INCLUDE_FROM_KATIANA_C
@@ -210,58 +212,29 @@ static volatile uint8_t sketchPresent;
 
 /**
 timeout is decremented in the Timer 1 compare match ISR and stops when it reaches zero.
-This is used to time certain behaviors in the bootloader.
-timeout ticks are  at 25Hz, 40ms per tick. 
-8 seconds = 200 ticks, 760ms = 19 ticks, etc
 */
 static volatile uint16_t timeout ATTR_NO_INIT;
 
-#if !defined(__DOXYGEN__)
-#define TIMEOUT_PERIOD			    200
-#define SHORT_TIMEOUT_PERIOD		 12
-#define EXT_RESET_TIMEOUT_PERIOD	 19
+// Timing constants
+#if !(F_CPU == 16000000)
+#error Current configuration for timer 1 requires a 16 MHz clock speed.
 #endif
+#define PRESCALER _BV(CS11) | _BV(CS10)     // setup prescaler to 1/64
+#define TIMER_1KHZ  250                     // compA value for 1 kHz timer: F_CPU = 16 MHz / 64 / 1 kHz = 250
 
-#if defined(LED_DATA_FLASHES)  || defined(__DOXYGEN__)
-/**
-<h3>LED Data Flashing</h3>
-Whenever the TX/RX LEDs flash, they will go on for one timer tick and then off
-for one timer tick. The on-then-off sequence is called a "flash cycle" and 
-does not end until the LED has been off for one timer tick (1/25 of a second).
+#define LED_FADE_PERIOD 4                   // period for updating led brightness while fading (in ms), full fade in / out cycle = LED_FADE_PERIOD * 255 * 2 (ms)
+#define LED_FLASH_LENGTH 60                 // length of a flash cycle (in ms)
+#define LED_FLASH_ON 40                     // time led is on during a flash cycle (in ms)
 
-These two variables are request flags to the timer match ISR
-to begin a flash cycle. They only have two states -- zero and non-zero.
+#define TIMEOUT 8000                        // normal bootloader timeout (in ms)
+#define TIMEOUT_EXT 60e3                    // extende bootloader timeout (in ms)
+#define SHORT_TIMEOUT_PERIOD 500            // timout period at the end of programming cycle (in ms)
+#define EXT_RESET_TIMEOUT_PERIOD 750        // timout period for double click external reset button
 
-To request a flash, just set one of them non-zero (0xff recommended).
-
-If a flash cycle is already in progress, these variables are not examined
-until the cycle is complete. When a flash cycle is completed, if these variables
-are non-zero, the ISR will begin another flash cycle for that LED, 
-and zero the request flag.
-
-If multiple flash cycles are requested during a flash cycle, only one flash
-cycle will result. That's the desired behavior.
-
-\see ISR
-\see rxLedFlash
-*/
-static volatile uint8_t txLedFlash;
-/**
-\see txLedFlash
-*/
-static volatile uint8_t rxLedFlash;
-#endif
-
-#if (LED_START_FLASHES > 0) || defined(__DOXYGEN__)
-/**
-When LED start flashes are enabled, this is used in the timer compare match ISR to
-count the number of on plus off periods generated. 
-Since the compare match rate (25Hz) is too fast for these flashes, it is divided by
-four to generate toggles of the LED state.
-It must be initialized to a multiple of 8 plus 1 if the LED is to finish in the OFF state.
-*/
-static volatile uint8_t ledFlashCount; // ATTR_NO_INIT;
-#endif
+static volatile bool ledFlash = false;      // true = Led flashes, false = led in fades in and out
+static volatile uint8_t ledTimer = 0;       // led timer
+static uint8_t ledX = 0;                    // state of led brightness: varies between 0 (off) and 255 (on)
+static int8_t ledDelta = 1;                 // next delta aplied to ledX
 
 /** 
 We need a small function in the to make copies of important data before it
@@ -315,6 +288,7 @@ static void StartSketch( void )
 
     /* Put DDR and PORT registers back to their original state */
     LEDs_Disable();
+    // TODO maybe switch and lcd disable => however, is this necessary / useful?
 
     /* Relocate the interrupt vector table to the application section */
     MCUCR = (1 << IVCE);
@@ -464,13 +438,6 @@ main(void)
 
     initialMCUSR |= 0x80u;	// flag the fact that the boot loader did not immediately start the sketch.
 
-#if (LED_START_FLASHES > 0)
-    //
-    // Timer 1 runs at 25Hz; the ISR will toggle the led at 25Hz/4 which 
-    // gives a flash rate of 25Hz/8 or about 3Hz
-    //
-    ledFlashCount = (LED_START_FLASHES << 2) + 1;
-#endif
     //
     // We're going to run the bootloader and that requires a bit more hardware initialization
     //
@@ -498,8 +465,8 @@ main(void)
         // The command processor may leave one of the LEDs on. Make sure
         // they are both off at the end of each pass through this loop.
         //
-        LEDs_RX_Off();
-        LEDs_TX_Off();
+        // LEDs_RX_Off();
+        // LEDs_TX_Off();
     }
 
     /* Wait a short time to wrap up all USB transactions and then disconnect */
@@ -561,84 +528,56 @@ static void SetupNormalHardware()
     USB_Init();
 
     LEDs_Init();
-    //
-    // Start timer 1 running in CTC mode with a 25Hz interrupt rate
-    // It will count up to the value in OCR1A then reset back to zero again, generating
-    // a compare match interrupt with every cycle.
-    //
-    OCR1A = TICK_COUNT_25HZ;		        // compare match value which generates 25Hz interrupt rate
-    TIMSK1 = _BV(OCIE1A);		            // enable timer 1 output compare A match interrupt
-    TCCR1B = TCCR1B_CS_25HZ | _BV(WGM12);   // setup the prescaler and CTC mode.
-    // TCNT1 = 0;			                // After MCU reset, TCNT1 is cleared; no need do that here.
 
+
+    //
+    // Start timer 1 running in CTC mode with a 1 kHz interrupt rate
+    // It will count up to the value in OCR1A then reset back to zero again, generating
+    // a compare match interrupt with every cycle
+    //
+
+    TIMSK1 = _BV(OCIE1A) | _BV(OCIE1B);     // enable timer 1 output compare A and B match interrupt
+    TCCR1B = PRESCALER | _BV(WGM12);        // setup the prescaler and CTC mode.
+    OCR1A = TIMER_1KHZ;                            
+}
+#define ledBrightness OCR1B
+
+// request a flash cycle if not flashing already
+static void flashLed(){
+    if (ledFlash) return;
+    ledFlash = true;
+    TIMSK1 = _BV(OCIE1A);   // disable compare B interrupt since led is only on or off, no pwm
 }
 
-/** 
-Timer 1 is configured to fire this compare match ISR at a 25Hz rate (40ms per compare match).
-This ISR provides a timeout function in addition to flashing LEDs as needed.
+ISR(TIMER1_COMPA_vect, ISR_BLOCK) {
+    if (sketchPresent && timeout ) timeout--;   // update general timer 
 
-Given the 40ms timer period, 
-it is possible to generate timeouts up to 10 seconds with only 8-bit timeout counters.
+    ledTimer++; // update ledtimer
 
-The "L" LED is simply flashed a fixed number of times at startup to indicate
-there's some form of life in the bootloader.
-
-The TX and RX LEDs are flashed when programming data is transferred to or from 
-the bootloader.
-See the definition of txLedFlash for more information on how flash cycles work for the
-TX and RX LEDs.
-
-\see timeout
-\see ledFlashCount 
-\see rxLedFlash 
-\see txLedFlash
-*/
-ISR(TIMER1_COMPA_vect, ISR_BLOCK)
-{
-    if ( sketchPresent & timeout ) timeout--;
-
-#if defined( LED_DATA_FLASHES )
-    if (LEDS_RX_TEST)
-    {
-        LEDs_RX_Off();
-    }
-    else
-    {
-        if (rxLedFlash)
-        {
-            LEDs_RX_On();
-            rxLedFlash = 0;
+    // Led in flash cycle
+    if (ledFlash){
+        if (ledTimer < LED_FLASH_ON) LED13_On();
+        else if (ledTimer < LED_FLASH_LENGTH) LED13_Off();
+        else {
+            ledFlash = false;                  // switch back to PWM mode and enable compareB interrupt again
+            TIMSK1 = _BV(OCIE1A) | _BV(OCIE1B); 
         }
-    }
 
-    if (LEDS_TX_TEST)
-    {
-        LEDs_TX_Off();
-    }
-    else
-    {
-        if (txLedFlash)
-        {
-            LEDs_TX_On();
-            txLedFlash = 0;
+    // Led in fade mode
+    } else {
+        if (ledTimer >= LED_FADE_PERIOD){
+            ledTimer = 0;
+            ledX += ledDelta;
+            ledBrightness = ((uint16_t)ledX * ledX) >> 8;    // kwadratic fade cycle
+            if (ledX == 0 || ~ledX == 0) ledDelta = -ledDelta;  // on the edges of fade cycle switch direction
         }
+        if (ledBrightness == 0) LED13_Off();
+        else LED13_On();
     }
-#endif
+}
 
-#if (LED_START_FLASHES > 0)
-    if (ledFlashCount)
-    {	
-        ledFlashCount--;
-        //
-        // toggle LED on every 4th timer tick, which effectively divides
-        // the 25Hz timer rate by eight, for a 3.125Hz flash rate.
-        //
-        if ((ledFlashCount & 0x03) == 0)
-        {
-            LEDs_L_Toggle();
-        }
-    }
-#endif
+ISR(TIMER1_COMPB_vect, ISR_BLOCK) {
+    LED13_Off();
 }
 
 /** 
@@ -931,7 +870,7 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
     //
     // every time we receive flash read/write block command, restart the 8-second timeout period.
     //
-    SetTimeout( TIMEOUT_PERIOD );
+    SetTimeout( TIMEOUT );
 }
 
 #endif
@@ -959,9 +898,7 @@ static uint8_t __attribute__((noinline)) CdcReceiveByte(void)
         }
     }
 
-#ifdef LED_DATA_FLASHES
-    rxLedFlash = 0xff;  // request a flash
-#endif
+    flashLed();
 
     /* Fetch the next byte from the OUT endpoint */
     return Endpoint_Read_8();
@@ -997,9 +934,7 @@ static void __attribute__((noinline)) CdcSendByte(const uint8_t Data)
         if (CdcFlush()) return;
     }
 
-#ifdef LED_DATA_FLASHES
-    txLedFlash = 0xff;  // request a flash
-#endif
+    flashLed();
 
     /* Write the next byte to the IN endpoint */
     Endpoint_Write_8(Data);
