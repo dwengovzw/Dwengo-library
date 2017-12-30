@@ -60,6 +60,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   Header file for the Katiana bootloader.
 */
 
+/*
+* Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+*   Bootloader for Dwenguino
+*
+* Changes made:
+*   - specify Dwengo Bootloader version
+*   
+*/
+
 #pragma once
 
 /* Includes: */
@@ -90,7 +99,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Macros: */
 #define BOOTLOADER_VERSION_MAJOR     0x02
-#define BOOTLOADER_VERSION_MINOR     0x04
+#define BOOTLOADER_VERSION_MINOR     0x00
 #define BOOTLOADER_HWVERSION_MAJOR   0x02
 #define BOOTLOADER_HWVERSION_MINOR   0x01
 
@@ -259,7 +268,7 @@ static void __attribute__((noinline)) SetTimeout(uint8_t);
 static void __attribute__((noinline)) BootRwwEnable(void);
 static void __attribute__((noinline)) ExecuteSPM( uint8_t );
  __attribute__((noinline)) static void IncrementAddress(void);
-static void  __attribute__((noinline)) WriteProgmemArray(uint8_t*, uint8_t);
+static void  __attribute__((noinline)) WriteProgmemArray(const uint8_t*, uint8_t);
 
 /** 
 Function which grabs at most one AVR-910 command and fully processes it

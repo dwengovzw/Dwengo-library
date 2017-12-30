@@ -108,13 +108,13 @@ with doxygen.
 /** 
 Pre-assigned AVR910 MCU signatures are defined in Descriptors.h 
 */
-static uint8_t avrSignature[3] PROGMEM = { AVR_SIGNATURE_3, AVR_SIGNATURE_2, AVR_SIGNATURE_1 };
+static const uint8_t avrSignature[3] PROGMEM = { AVR_SIGNATURE_3, AVR_SIGNATURE_2, AVR_SIGNATURE_1 };
 
 /** 
 String used to identify this bootloader to the AVR910 programmer.
 \see Defined in Katiana.h
 */
-static uint8_t softwareIdentifier[7] PROGMEM = SOFTWARE_IDENTIFIER;
+static const uint8_t softwareIdentifier[7] PROGMEM = SOFTWARE_IDENTIFIER;
 
 /** 
 Contains the current baud rate and other settings of the first virtual serial port. 
@@ -179,7 +179,7 @@ reset would change unexpectedly.
 
 When this code starts up, it saves the value stored at the boot key location in a global variable.
 */
-#define bootKey (*(volatile uint16_t *)(RAMEND-1))
+#define bootKey (*(volatile uint16_t *)0x0800) // change back to (RAMEND-1)
 /** 
 The value of the boot key at reset time is saved here by a function in the .init0 section.
 */
@@ -724,7 +724,7 @@ copies them out to the USB host using CdcSendByte().
 \param[in] Count is the number of bytes to be sent.
 \see CdcSendByte
 */
-static void WriteProgmemArray(uint8_t *Response, uint8_t Count)
+static void WriteProgmemArray(const uint8_t *Response, uint8_t Count)
 {
     while (Count--) CdcSendByte( pgm_read_byte_near( Response++ ) );
 }

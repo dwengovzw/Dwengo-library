@@ -67,6 +67,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    bytes to the overall flash image. Oh well, best to let sleepin' dogs lie.
  */
 
+/*
+* Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+*   Bootloader for Dwenguino
+*
+* Changes made:
+*   - specify Dwengo manufacturer and product descriptors
+*   
+*/
+
 #include "Descriptors.h"
 
 /** Device descriptor structure. This descriptor, located in SRAM memory, describes the overall
@@ -78,7 +87,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
 0x9207 is the PID for LilyPad bootloader, 0x9208 is PID for LilyPad sketches
 */
-const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
+const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =	// TODO: why are these in PROGMEM?? , also remove Sram versions caches and cache function at the end of this file
 {
 	.Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
 
@@ -227,13 +236,13 @@ const USB_Descriptor_String_t LanguageString = USB_STRING_DESCRIPTOR_ARRAY(LANGU
  *  form, and is read out upon request by the host when the appropriate string ID is requested, listed in the Device
  *  Descriptor.
  */
-const USB_Descriptor_String_t ManufacturerString = USB_STRING_DESCRIPTOR(L"Manufacturer Name Goes Here");
+const USB_Descriptor_String_t ManufacturerString = USB_STRING_DESCRIPTOR(L"Dwengo LLC");
 
 /** Product descriptor string. This is a Unicode string containing the product's details in human readable form,
  *  and is read out upon request by the host when the appropriate string ID is requested, listed in the Device
  *  Descriptor.
  */
-const USB_Descriptor_String_t ProductString = USB_STRING_DESCRIPTOR(L"Product Name Goes Here");
+const USB_Descriptor_String_t ProductString = USB_STRING_DESCRIPTOR(L"Dwenguino Bootloader");
 
 #if defined(CUSTOM_USB_SERIAL) || defined(__DOXYGEN__)
 
@@ -261,7 +270,7 @@ Not sure if we need to include a terminating null 16-bits but we do anyway just 
 
 Let the init code zero this array so we can tell from the length field if it's already been setup.
 */
-static uint8_t SramSerialString[ sizeof( USB_StdDescriptor_Header_t ) + (strlen(USB_HDWR_SERIAL) << 1) + 2 ];
+static uint8_t SramSerialString[ sizeof( USB_StdDescriptor_Header_t ) + (sizeof(USB_HDWR_SERIAL) * 2) + 2 ];
 
 #endif
 

@@ -79,10 +79,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *  @{
 */
 
+/*
+* Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+*   Bootloader for Dwenguino
+*
+* Changes made:
+*   - Disable TX / RX functionality
+*   - use LED 13 in bootloader
+*   
+*/
+
 #pragma once
 
 /* Includes: */
-#include "../../LUFA/Common/Common.h"
+#include <LUFA/Common/Common.h>
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
@@ -123,7 +133,7 @@ extern "C" {
 
 #define LEDS_RX_BIT	0x40
 #define LEDS_TX_BIT	0x40
-#define LEDS_L_BIT	0x10
+#define LEDS_L_BIT	0x02 // LED13 on PB1
     
 #define LEDS_RX_ACTIVE  1
 #define LEDS_TX_ACTIVE  1

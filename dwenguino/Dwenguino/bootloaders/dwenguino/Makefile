@@ -30,31 +30,37 @@
 #   DeviceStandardReq.c:    Enable code in two places
 #   Device_AVR8.h	    Enable declaration of USB_Device_GetSerialString based on CUSTOM_USB_SERIAL
 #			    Remove static inline from declaration.
+
+
+# Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+# 	Bootloader for Dwenguino
+#
+	
 #
 # =========== USER EDIT SECTION ====================
 #
-MCU          = atmega32u4
+MCU          = at90usb646
 ARCH         = AVR8
 BOARD        = USER
-F_CPU        = 8000000
-F_USB        = 8000000
+F_CPU        = 16000000
+F_USB        = $(F_CPU)
 #
 # Flash and bootloader section sizes of the target, in KB. 
 # There's no easy way to import these into this makefile based on the MCU macro,
 # so they must be manually set to match the selected MCU's flash size and also
 # the boot sector size programmed into the MCU's fuses.
 #
-FLASH_SIZE_KB		= 32
-BOOT_SECTION_SIZE_KB	= 4
-OPTIMIZATION		= s
-TARGET			= Katiana
-SRC			= $(TARGET).c Descriptors.c SignatureTable.S $(LUFA_SRC_USB)
+FLASH_SIZE_KB		 = 64
+BOOT_SECTION_SIZE_KB = 4
+OPTIMIZATION		 = s
+TARGET				 = Katiana
+SRC					 = $(TARGET).c Descriptors.c SignatureTable.S $(LUFA_SRC_USB)
 #
 # ============== END USER EDIT SECTION ==================
 #
 # not normally required to edit lines below this point
 #
-LUFA_PATH    = ../../LUFA
+LUFA_PATH    = ./LUFA-170418/LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/ -DBOOT_START_ADDR=$(BOOT_START_OFFSET)
 LD_FLAGS     = -Wl,--section-start=.text=$(BOOT_START_OFFSET) $(BOOT_API_LD_FLAGS)
 # Bootloader address calculation formulas

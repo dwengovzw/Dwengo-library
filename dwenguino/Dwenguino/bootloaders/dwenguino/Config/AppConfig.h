@@ -66,6 +66,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  \ref Sec_Options section of the application documentation.
  */
 
+/*
+* Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+*   Bootloader for Dwenguino
+*
+* Changes made:
+*   - use Dwengo USB VID and PID
+*   
+*/
+
 #pragma once
 //
 // This is the only option absolutely required for a working bootloader
@@ -84,7 +93,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // To have a custom USB serial number reported:
 //
-	#define CUSTOM_USB_SERIAL
+//	#define CUSTOM_USB_SERIAL
     #define STRICT_USB_SERIAL
 //
 // these options are not required for normal Arduino IDE uploads to work
@@ -98,6 +107,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //	#define ENABLE_LOCK_BYTE_WRITE_SUPPORT
 	#define ENABLE_LOCK_FUSE_READ_SUPPORT
 
-#define USB_VID 0x1B4F
-#define USB_PID 0x9207
+#define USB_VID 0xd3e0 // Dwengo LLC VID (Non-official) 
+#define USB_PID 0x601b // Dwengo bootloader PID
 

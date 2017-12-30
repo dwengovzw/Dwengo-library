@@ -48,8 +48,8 @@
 #pragma once
 
 /* Includes: */
-	#include "../../../../Common/Common.h"
 	#include "../../LEDs.h"
+  #include <LUFA/Common/Common.h>
 
 /* Enable C linkage for C++ Compilers: */
 	#if defined(__cplusplus)
