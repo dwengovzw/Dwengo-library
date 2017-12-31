@@ -54,7 +54,7 @@ FLASH_SIZE_KB		 = 64
 BOOT_SECTION_SIZE_KB = 4
 OPTIMIZATION		 = s
 TARGET				 = Katiana
-SRC					 = $(TARGET).c Descriptors.c SignatureTable.S $(LUFA_SRC_USB)
+SRC					 = $(TARGET).c Board/Board.c Descriptors.c SignatureTable.S $(LUFA_SRC_USB)
 #
 # ============== END USER EDIT SECTION ==================
 #

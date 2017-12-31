@@ -110,6 +110,7 @@ with doxygen.
 *   - hold SW_S while pressing and releasing reset to enter bootloader
 *   - change timing behaviour: timer 1 now runs at 1kHz
 *   - add LED13 animation: led fades in and out during bootloader idle time and flashes on data transfer
+*   - indicate bootloader mode on lcd display
 *   
 */
 #define INCLUDE_FROM_KATIANA_C
@@ -461,12 +462,6 @@ main(void)
         // here instead of calling it...See USBTask.c in LUFA/Drivers/USB/Core.
         //
         USB_USBTask();
-        //
-        // The command processor may leave one of the LEDs on. Make sure
-        // they are both off at the end of each pass through this loop.
-        //
-        // LEDs_RX_Off();
-        // LEDs_TX_Off();
     }
 
     /* Wait a short time to wrap up all USB transactions and then disconnect */
@@ -474,6 +469,9 @@ main(void)
 
     /* Disconnect from the host - USB interface will be reset later along with the AVR */
     USB_Detach();
+
+    // clear LCD
+    LCD_clear();
 
     StartSketch();
 }
@@ -517,6 +515,19 @@ static void SetupNormalHardware()
     // Relocate the interrupt vector table to the bootloader section
     MCUCR = (1 << IVCE);
     MCUCR = (1 << IVSEL);
+
+    // Init LED13
+    LEDs_Init();
+
+    // Init LCD and print Bootloader is in idle state
+    LCD_init(initialMCUSR & _BV(PORF));
+    LCD_BL_Off();
+    LCD_print("Bootloader:");
+    LCD_setCursor(1, 1);
+    LCD_print("Awaiting PC");
+    LCD_setCursor(1, 1);
+    LCD_setDataPort(0);
+
     /*
     Not sure if this is necessary? 
     Does the USB host always set line encoding before reading it? If so, this is not required.
@@ -526,9 +537,6 @@ static void SetupNormalHardware()
     */
     cdcPortSettings.DataBits = 8;
     USB_Init();
-
-    LEDs_Init();
-
 
     //
     // Start timer 1 running in CTC mode with a 1 kHz interrupt rate
@@ -540,6 +548,11 @@ static void SetupNormalHardware()
     TCCR1B = PRESCALER | _BV(WGM12);        // setup the prescaler and CTC mode.
     OCR1A = TIMER_1KHZ;                            
 }
+static inline void LCD_showProgrammingMode(void){
+    LCD_print("Programming");
+    LCD_setDataPort(0);
+}
+
 #define ledBrightness OCR1B
 
 // request a flash cycle if not flashing already
@@ -1031,7 +1044,9 @@ static void ProcessAVR910Command(void)
     }
     else if (Command == AVR109_COMMAND_ReadBootloaderIdentifier)
     {
-        /* Write the 7-byte software identifier to the endpoint */
+        // This is the first command that will get executed by the host after connection has been established => enter programming mode on LCD
+        LCD_showProgrammingMode();   
+     /* Write the 7-byte software identifier to the endpoint */
         WriteProgmemArray( softwareIdentifier, 7 );
     }
     else if (Command == AVR109_COMMAND_ReadBootloaderSWVersion)

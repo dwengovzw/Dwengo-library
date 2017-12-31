@@ -63,11 +63,6 @@
       extern "C" {
     #endif
 
-    /* Preprocessor Checks: */
-    #if !defined(__INCLUDE_FROM_BOARD_H)
-      #error Do not include this file directly. Include LUFA/Drivers/Board/Board.h instead.
-    #endif
-
 
 // LEDS
     #define LED13_PORT PORTB   // LED 13 on PB1
@@ -161,6 +156,91 @@
     // #define SWC_SETUP()   {DDRC &= ~(1<<7); PORTC |= (1<<7);} // configure Switch C pin (=PC7) as input with pull-up
     // #define SWC_STATUS()  (PINC & (1<<7))
 
+
+// LCD
+    #define LCD_DATA_DDR  DDRA  
+    #define LCD_DATA_PORT PORTA
+    #define LCD_FN_DDR    DDRE
+    #define LCD_FN_PORT   PORTE
+    #define LCD_BL_BIT    (1<<3)
+    #define LCD_E_BIT     (1<<2)
+    #define LCD_RW_BIT    (1<<1)
+    #define LCD_RS_BIT    (1<<0)
+
+    // commands
+    #define LCD_CLEARDISPLAY 0x01
+    #define LCD_RETURNHOME 0x02
+    #define LCD_ENTRYMODESET 0x04
+    #define LCD_DISPLAYCONTROL 0x08
+    #define LCD_CURSORSHIFT 0x10
+    #define LCD_FUNCTIONSET 0x20
+    #define LCD_SETCGRAMADDR 0x40
+    #define LCD_SETDDRAMADDR 0x80
+
+    // flags for display entry mode
+    #define LCD_ENTRYRIGHT 0x00
+    #define LCD_ENTRYLEFT 0x02
+    #define LCD_ENTRYSHIFTINCREMENT 0x01
+    #define LCD_ENTRYSHIFTDECREMENT 0x00
+
+    // flags for display on/off control
+    #define LCD_DISPLAYON 0x04
+    #define LCD_DISPLAYOFF 0x00
+    #define LCD_CURSORON 0x02
+    #define LCD_CURSOROFF 0x00
+    #define LCD_BLINKON 0x01
+    #define LCD_BLINKOFF 0x00
+
+    // flags for display/cursor shift
+    #define LCD_DISPLAYMOVE 0x08
+    #define LCD_CURSORMOVE 0x00
+    #define LCD_MOVERIGHT 0x04
+    #define LCD_MOVELEFT 0x00
+
+    // flags for function set
+    #define LCD_8BITMODE 0x10
+    #define LCD_4BITMODE 0x00
+    #define LCD_2LINE 0x08
+    #define LCD_1LINE 0x00
+    #define LCD_5x10DOTS 0x04
+    #define LCD_5x8DOTS 0x00
+
+    static inline void LCD_PortInit(void) {
+        LCD_DATA_DDR = 0xFF;  // set all data pins as output
+        LCD_FN_DDR |= 0x0F;   // set al lcd function pins as output
+    }
+    static inline void LCD_setDataPort(uint8_t data){
+        LCD_DATA_PORT = data;
+    }
+    static inline void LCD_BL_On(void) {
+        LCD_FN_PORT |= LCD_BL_BIT;
+    } 
+    static inline void LCD_BL_Off(void) {
+        LCD_FN_PORT &= ~LCD_BL_BIT;
+    }
+    static inline void LCD_E_High(void) {
+        LCD_FN_PORT |= LCD_E_BIT;
+    } 
+    static inline void LCD_E_Low(void) {
+        LCD_FN_PORT &= ~LCD_E_BIT;
+    }
+    static inline void LCD_RW_High(void) {
+        LCD_FN_PORT |= LCD_RW_BIT;
+    } 
+    static inline void LCD_RW_Low(void) {
+        LCD_FN_PORT &= ~LCD_RW_BIT;
+    }
+    static inline void LCD_RS_High(void) {
+        LCD_FN_PORT |= LCD_RS_BIT;
+    } 
+    static inline void LCD_RS_Low(void) {
+        LCD_FN_PORT &= ~LCD_RS_BIT;
+    }
+
+    void LCD_clear(void);
+    void LCD_init(bool waitForPowerUp);
+    void LCD_print(const char* str);
+    void LCD_setCursor(uint8_t row, uint8_t col);
 
 /* Disable C linkage for C++ Compilers: */
   #if defined(__cplusplus)
