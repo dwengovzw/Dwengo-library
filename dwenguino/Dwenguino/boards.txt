@@ -31,6 +31,7 @@ Dwenguino.build.f_cpu=16000000L
 Dwenguino.build.board=AVR_DWENGUINO
 Dwenguino.build.vid=0xd3e0
 Dwenguino.build.pid=0x601a
+Dwenguino.build.usb_manufacturer="Dwengo LLC"
 Dwenguino.build.usb_product="Dwenguino Board"
 Dwenguino.build.extra_flags={build.usb_flags}
 Dwenguino.build.core=dwenguino
