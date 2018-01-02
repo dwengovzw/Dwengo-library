@@ -106,6 +106,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =	// TODO: why are these 
 	.ProductStrIndex        = STRING_ID_Product,
 #if defined(CUSTOM_USB_SERIAL)
 	.SerialNumStrIndex      = STRING_ID_Serial, 
+#elif defined (USE_INTERNAL_SERIAL)
+	.SerialNumStrIndex      = USE_INTERNAL_SERIAL,
 #else
 	.SerialNumStrIndex      = NO_DESCRIPTOR, 
 #endif
