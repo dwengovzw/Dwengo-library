@@ -1,0 +1,32 @@
+###################################
+# Syntax Coloring Map For LinxDwenguino
+###################################
+
+###################################
+# Datatypes (KEYWORD1)
+###################################
+LinxDwenguino		KEYWORD1
+LinxSerialListener	KEYWORD1
+
+###################################
+# Methods and Functions (KEYWORD2)
+###################################
+Start	KEYWORD2
+Listen	KEYWORD2
+Available	KEYWORD2
+Accept	KEYWORD2
+Connected	KEYWORD2
+Close	KEYWORD2
+Exit	KEYWORD2
+
+AttachCustomCommand	KEYWORD2
+CheckForCommands	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+LinxSerialConnection	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################

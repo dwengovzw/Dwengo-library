@@ -1,4 +1,4 @@
-/****************************************************************************************	
+/**************************************************************************************** 
 **  This is example LINX firmware for use with the Dwenguino with the serial 
 **  interface enabled.
 **
@@ -74,11 +74,11 @@ int readPullup(unsigned char numPins, unsigned char* pins, unsigned char* numRes
     
     //Read From Next Pin
     unsigned char pinNumber = pins[i];
-    pinMode(pinNumber, INPUT_PULLUP); //Set Pin As Input Pull up    		
-    retVal = retVal | (digitalRead(pinNumber) << bitOffset);	//Read Pin And Insert Value Into retVal
+    pinMode(pinNumber, INPUT_PULLUP); //Set Pin As Input Pull up        
+    retVal = retVal | (digitalRead(pinNumber) << bitOffset);  //Read Pin And Insert Value Into retVal
   }
   
-  //Store Last Byte	
+  //Store Last Byte 
   values[byteOffset] = retVal;
   
   //Set number of send bytes
@@ -91,7 +91,7 @@ int writeLCD(unsigned char numInputBytes, unsigned char* input, unsigned char* n
   input[numInputBytes] = 0x00;  // add string termination char
   String str((char*)input);     // convert ascii array to string object
   
-  pinMode(LCD_RS, OUTPUT);		// make sure command pins are output
+  pinMode(LCD_RS, OUTPUT);    // make sure command pins are output
   pinMode(LCD_RW, OUTPUT);
   pinMode(LCD_E, OUTPUT);
   dwenguinoLCD.clear();         // clear lcd
@@ -111,7 +111,7 @@ int writeLCD(unsigned char numInputBytes, unsigned char* input, unsigned char* n
     dwenguinoLCD.print(str.substring(pos, pos2));
   }
 
-  *numResponseBytes = 0;        // don't send a response
-   
-  return L_OK;
+  *numResponseBytes = 0; // don't send a response
+  
+  return L_OK;
 }
