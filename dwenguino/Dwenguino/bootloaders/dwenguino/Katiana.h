@@ -108,7 +108,7 @@ Eight character bootloader firmware identifier reported to the host when request
 This is the value stored at (FLASHEND-1) which is examined by Arduino core libraries (CDC.cpp)
 to determine whether the boot key belongs at (RAMEND-1) or not.
 
-- 0xDC42 -- boot key is at (RAMEND-1)
+- 0xDCFB -- boot key is at (RAMEND-1)
 - Any other value -- boot key is at 0x0800
 
 Placing the boot key at 0x0800 in SRAM was a low-risk bug. 
@@ -121,7 +121,6 @@ own CDC serial port.
 We use (RAMEND-1) for the boot key so this must have this value or Arduino sketch uploads 
 will not work.
 */
-#define MAGIC_BOOT_KEY               0xDC42
 
 /* Enums: */
 /** Possible memory types that can be addressed via the bootloader. */

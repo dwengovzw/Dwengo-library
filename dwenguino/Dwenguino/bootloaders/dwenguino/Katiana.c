@@ -190,7 +190,7 @@ reset would change unexpectedly.
 
 When this code starts up, it saves the value stored at the boot key location in a global variable.
 */
-#define bootKey (*(volatile uint16_t *)0x0800) // change back to (RAMEND-1)
+#define bootKey (*(volatile uint16_t *)(RAMEND-1))
 /** 
 The value of the boot key at reset time is saved here by a function in the .init0 section.
 */
