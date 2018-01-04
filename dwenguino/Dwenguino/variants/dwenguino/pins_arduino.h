@@ -37,6 +37,8 @@
 
 #include <avr/pgmspace.h>
 
+#define DEVICE_VERSION 0x0200   // Dwenguino Device version in 0xJJMN, with J = major verion, M = minor version, N = sub minor version
+
 // Libraries control:
 #define TONE_USE_TIMER2         // Use timer 2 for Tone, You can also choose to use timer 1 or 3
 #define DISABLE_NEWPING_TIMER   // disable timer functionality of newpin library because they use same timer2 in CTC mode as tone function

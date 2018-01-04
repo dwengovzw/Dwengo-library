@@ -16,6 +16,14 @@
    SOFTWARE.
  */
 
+/*
+  Modified on Dec 20 2014 by Jelle Roets from Dwengo vzw (www.dwengo.org)
+
+  Changes made:
+    - add Dwenguino usb descriptors
+    - report internal serial number (in signature row of avr) during usb enumeration
+*/
+
 #define PLUGGABLE_USB_ENABLED
 
 #if defined(EPRST6)
@@ -25,6 +33,11 @@
 #endif
 
 #define ISERIAL_MAX_LEN     20
+
+#define CDC_DEVICE_CLASS 0x02
+#define CDC_ACM_SUBCLASS 0x02
+#define NO_SUBCLASS 0x00
+#define NO_PROTOCOL 0x00 
 
 #define CDC_INTERFACE_COUNT	2
 #define CDC_ENPOINT_COUNT	3
@@ -44,3 +57,8 @@
 #define IMANUFACTURER   1
 #define IPRODUCT        2
 #define ISERIAL         3
+
+#define USE_INTERNAL_SERIAL
+#define INTERNAL_SERIAL_LENGTH_BYTES 10
+#define INTERNAL_SERIAL_START_ADDRESS 0x0E
+

@@ -23,11 +23,13 @@
 
   Changes made:
     - add Dwenguino usb descriptors
+    - report internal serial number (in signature row of avr) during usb enumeration
 */
 
 #include "USBAPI.h"
 #include "PluggableUSB.h"
 #include <stdlib.h>
+#include <avr/boot.h>
 
 #if defined(USBCON)
 
@@ -86,9 +88,13 @@ const u8 STRING_MANUFACTURER[] PROGMEM = USB_MANUFACTURER;
 
 #define DEVICE_CLASS 0x02
 
+#ifndef DEVICE_VERSION
+#define DEVICE_VERSION 0x100
+#endif
+
 //	DEVICE DESCRIPTOR
 const DeviceDescriptor USB_DeviceDescriptorIAD =
-	D_DEVICE(0xEF,0x02,0x01,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,ISERIAL,1);
+	D_DEVICE(CDC_DEVICE_CLASS, CDC_ACM_SUBCLASS, NO_PROTOCOL, 64, USB_VID, USB_PID, DEVICE_VERSION, IMANUFACTURER, IPRODUCT, ISERIAL, 1);
 
 //==================================================================
 //==================================================================
@@ -544,7 +550,18 @@ bool SendDescriptor(USBSetup& setup)
 			return USB_SendStringDescriptor(STRING_MANUFACTURER, strlen(USB_MANUFACTURER), TRANSFER_PGM);
 		}
 		else if (setup.wValueL == ISERIAL) {
-#ifdef PLUGGABLE_USB_ENABLED
+#if defined(USE_INTERNAL_SERIAL)
+			char serialNumber[INTERNAL_SERIAL_LENGTH_BYTES*2];
+			for (uint8_t i = 0; i < INTERNAL_SERIAL_LENGTH_BYTES; i++){
+				uint8_t serialByte = boot_signature_byte_get(INTERNAL_SERIAL_START_ADDRESS + i);
+				uint8_t highNibble = serialByte >> 4;
+				uint8_t lowNibble = serialByte & 0x0F;
+				serialNumber[i * 2] =  (highNibble < 10) ? '0' + highNibble : 'A' + highNibble - 10;
+				serialNumber[i * 2 + 1] = (lowNibble < 10) ? '0' + lowNibble : 'A' + lowNibble - 10;
+			}
+			return USB_SendStringDescriptor((uint8_t*)serialNumber, INTERNAL_SERIAL_LENGTH_BYTES*2, 0);
+			
+#elif defined(PLUGGABLE_USB_ENABLED)
 			char name[ISERIAL_MAX_LEN];
 			PluggableUSB().getShortName(name);
 			return USB_SendStringDescriptor((uint8_t*)name, strlen(name), 0);
