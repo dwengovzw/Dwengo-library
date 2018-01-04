@@ -74,6 +74,7 @@
 		#define USE_RAM_DESCRIPTORS
 //		#define USE_FLASH_DESCRIPTORS
 //		#define USE_EEPROM_DESCRIPTORS
+		#define NO_INTERNAL_SERIAL
 //
 // define this to match what is used in the Arduino core
 //

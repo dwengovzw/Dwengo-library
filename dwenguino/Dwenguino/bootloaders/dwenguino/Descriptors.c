@@ -73,6 +73,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 * Changes made:
 *   - specify Dwengo manufacturer and product descriptors
+*   - fix LUFA bug of switched nibbles in getInternalSerial
 *   
 */
 
@@ -87,11 +88,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
 0x9207 is the PID for LilyPad bootloader, 0x9208 is PID for LilyPad sketches
 */
-const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =	// TODO: why are these in PROGMEM?? , also remove Sram versions caches and cache function at the end of this file
+const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 {
 	.Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
 
-	.USBSpecification       = VERSION_BCD(1,1,0),
+	.USBSpecification       = VERSION_BCD(2,0,0),
 	.Class                  = CDC_CSCP_CDCClass,
 	.SubClass               = CDC_CSCP_NoSpecificSubclass,
 	.Protocol               = CDC_CSCP_NoSpecificProtocol,
@@ -100,11 +101,11 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =	// TODO: why are these 
 
 	.VendorID               = USB_VID,
 	.ProductID              = USB_PID,
-	.ReleaseNumber          = VERSION_BCD(1,0,0),
+	.ReleaseNumber          = DEVICE_VERSION,
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
 	.ProductStrIndex        = STRING_ID_Product,
-#if defined(CUSTOM_USB_SERIAL)
+#if defined(CUSTOM_USB_SERIAL) || defined(OWN_INTERNAL_SERIAL)
 	.SerialNumStrIndex      = STRING_ID_Serial, 
 #elif defined (USE_INTERNAL_SERIAL)
 	.SerialNumStrIndex      = USE_INTERNAL_SERIAL,
@@ -151,7 +152,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 
 			.Class                  = CDC_CSCP_CDCClass,
 			.SubClass               = CDC_CSCP_ACMSubclass,
-			.Protocol               = CDC_CSCP_ATCommandProtocol,
+			.Protocol               = CDC_CSCP_NoDataProtocol,
 
 			.InterfaceStrIndex      = NO_DESCRIPTOR
 		},
@@ -246,7 +247,15 @@ const USB_Descriptor_String_t ManufacturerString = USB_STRING_DESCRIPTOR(L"Dweng
  */
 const USB_Descriptor_String_t ProductString = USB_STRING_DESCRIPTOR(L"Dwenguino Bootloader");
 
-#if defined(CUSTOM_USB_SERIAL) || defined(__DOXYGEN__)
+#if defined(OWN_INTERNAL_SERIAL)
+/** Serial number descriptor string
+*/
+struct {
+	USB_Descriptor_Header_t Header;
+	wchar_t                 UnicodeString[INTERNAL_SERIAL_BYTES * 2];
+} SerialString;
+
+#elif defined(CUSTOM_USB_SERIAL) || defined(__DOXYGEN__)
 
 #include "UsbHdwrSerial.h"  // will define the USB_HDWR_SERIAL macro.
 /**
@@ -334,17 +343,37 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t	wValue,
             Address = &ProductString;
             Size    = ProductString.Header.Size;
         }
-#if defined(CUSTOM_USB_SERIAL)
         else if (DescriptorNumber == STRING_ID_Serial)
         {
+#if defined(OWN_INTERNAL_SERIAL)
+			/* LUFA function USB_Device_GetSerialString in Device_AVR8.h file has an error: while reading out the internal serial number, it converts the lower 4 bits first and secondly the higher 4 bits,
+			*  resulting in a different serial number than the real one in the signature row (still unique though), which is confusing for other devices reading out this serial number!
+			*  This issue has been reported, but is not going to be fixed for backward compatibility reasons, see https://github.com/abcminiuser/lufa/issues/88
+			*
+			*  The following function returns the serial number as is provided by the signature row, converted into a unicode string representing the hexadecimal symbols
+			*/
+
+			SerialString.Header.Type = DTYPE_String;
+			SerialString.Header.Size = USB_STRING_LEN(INTERNAL_SERIAL_BYTES * 2);
+
+			for (uint8_t i = 0; i < INTERNAL_SERIAL_BYTES; i++){
+				uint8_t serialByte = boot_signature_byte_get(INTERNAL_SERIAL_ADDRESS + i);
+				uint8_t highNibble = serialByte >> 4;
+				uint8_t lowNibble = serialByte & 0x0F;
+				SerialString.UnicodeString[i * 2] =  cpu_to_le16((highNibble < 10) ? '0' + highNibble : 'A' + highNibble - 10);
+				SerialString.UnicodeString[i * 2 + 1] = cpu_to_le16((lowNibble < 10) ? '0' + lowNibble : 'A' + lowNibble - 10);
+			}
+			Address = &SerialString;
+			Size = SerialString.Header.Size;
+
+#elif defined(CUSTOM_USB_SERIAL)
             CacheDescriptor( SramSerialString, (uint8_t *)&SerialString );
             Address = SramSerialString;
             Size    = SramSerialString[0];
-        }
 #endif
+        }
     }
 
 	*DescriptorAddress = Address;
 	return Size;
 }
-

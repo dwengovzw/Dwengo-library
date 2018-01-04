@@ -73,6 +73,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * Changes made:
 *   - use Dwengo USB VID and PID
 *   - add Bootloader enter modes
+*   - use own internal serial 
 */
 
 #pragma once
@@ -96,10 +97,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 	// #define CUSTOM_USB_SERIAL
     // #define STRICT_USB_SERIAL
-#if defined(CUSTOM_USB_SERIAL)
-  #define NO_INTERNAL_SERIAL
-#endif
 
+// enable to use own implementation of internal serial number for usb enumeration: see descriptors.c
+#define OWN_INTERNAL_SERIAL
+#define INTERNAL_SERIAL_BYTES 10
+#define INTERNAL_SERIAL_ADDRESS 0x0E
+
+// #define NO_INTERNAL_SERIAL
 //
 // these options are not required for normal Arduino IDE uploads to work
 // there is really no reason to turn them on unless you are using a
@@ -112,6 +116,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //	#define ENABLE_LOCK_BYTE_WRITE_SUPPORT
 	#define ENABLE_LOCK_FUSE_READ_SUPPORT
 
+#define DEVICE_VERSION VERSION_BCD(2,0,0)
 #define USB_VID 0xd3e0 // Dwengo LLC VID (Non-official) 
 #define USB_PID 0x601b // Dwengo bootloader PID
 
