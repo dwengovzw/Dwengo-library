@@ -36,6 +36,34 @@
               "version": "6.0.1-arduino5"
             }
           ]
+        },
+        {
+          "name": "Dwenguino",
+          "architecture": "avr",
+          "version": "2.2.0",
+          "category": "Contributed",
+          "help": {
+            "online": "http://www.dwengo.org/tutorials"
+          },
+          "url": "https://github.com/dwengovzw/Dwengo-library/raw/bootloaderUpdates/dwenguino/Dwenguino-2.2.0.zip",
+          "archiveFileName": "Dwenguino.zip",
+          "checksum": "SHA-256:e28cf1ce2068a107ee53c259a6a2c680a79bbac9e792c50b9a5c96c5885469a8",
+          "size": "404044",
+          "boards": [
+            {"name": "Dwenguino"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
         }
       ],
       "tools":[]
