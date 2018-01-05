@@ -33,9 +33,8 @@
 
 
 # Modified on Dec 23 2017 by Jelle Roets from Dwengo vzw (www.dwengo.org)
-# 	Bootloader for Dwenguino
+# 	Bootloader for BootloaderDwenguino	TODO: automatically make a new bootloader that includes welcome sketch as well!
 #
-	
 #
 # =========== USER EDIT SECTION ====================
 #
@@ -53,7 +52,7 @@ F_USB        = $(F_CPU)
 FLASH_SIZE_KB		 = 64
 BOOT_SECTION_SIZE_KB = 4
 OPTIMIZATION		 = s
-TARGET				 = Katiana
+TARGET				 = BootloaderDwenguino
 SRC					 = $(TARGET).c Board/Board.c Descriptors.c SignatureTable.S $(LUFA_SRC_USB)
 #
 # ============== END USER EDIT SECTION ==================
@@ -77,9 +76,7 @@ BOOT_API_LD_FLAGS    += $(call BOOT_SECTION_LD_FLAG, .apitable_signatures,  Boot
 # Default target
 all:
 
-all:	CheckUsbSerial
-
-clean:	RemoveUsbSerialCheck
+clean:	
 
 # Include LUFA-specific DMBS extension modules
 DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
@@ -96,11 +93,3 @@ include $(DMBS_PATH)/gcc.mk
 include $(DMBS_PATH)/hid.mk
 include $(DMBS_PATH)/avrdude.mk
 include $(DMBS_PATH)/atprogram.mk
-
-CheckUsbSerial: ValidateUsbHdwrSerial.c
-	cc ValidateUsbHdwrSerial.c -o TmpExec.exe
-	./TmpExec.exe
-	@rm -f TmpExec.exe
-
-RemoveUsbSerialCheck:
-	rm -f TmpExec.exe

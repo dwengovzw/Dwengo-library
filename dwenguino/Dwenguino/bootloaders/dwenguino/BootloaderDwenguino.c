@@ -114,7 +114,7 @@ with doxygen.
 *   
 */
 #define INCLUDE_FROM_KATIANA_C
-#include "Katiana.h"
+#include "BootloaderDwenguino.h"
 
 /** 
 Pre-assigned AVR910 MCU signatures are defined in Descriptors.h 

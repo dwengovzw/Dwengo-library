@@ -1,2 +1,0 @@
-#pragma once
-#define USB_HDWR_SERIAL "00000000000000000000"
