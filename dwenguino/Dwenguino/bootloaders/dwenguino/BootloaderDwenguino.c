@@ -444,12 +444,20 @@ main(void)
     //
     SetupNormalHardware();
 
-#if defined (BOOTENTER_SWITCH)
+#if defined(BOOTENTER_SWITCH) && defined (BOOTENTER_DOUBLERESET)
+    if (BOOTSW_pressed() || (initialMCUSR & _BV(EXTRF))) SetTimeout( TIMEOUT_EXT );
+    else SetTimeout( TIMEOUT );
+#elif defined(BOOTENTER_SWITCH)
     if (BOOTSW_pressed()) SetTimeout( TIMEOUT_EXT );
+    else SetTimeout( TIMEOUT );
+#elif defined(BOOTENTER_DOUBLERESET)
+    if (initialMCUSR & _BV(EXTRF)) SetTimeout( TIMEOUT_EXT );
     else SetTimeout( TIMEOUT );
 #else
     SetTimeout( TIMEOUT );
 #endif
+
+
     //
     // timeout only decrements when there's a sketch loaded, so this loop
     // runs forever until someone loads page address zero
