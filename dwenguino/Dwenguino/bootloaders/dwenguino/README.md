@@ -9,13 +9,10 @@ also see https://github.com/aweatherguy/Katiana/blob/master/Katiana-Bootloader.p
 - download the [LUFA library - v170418](https://github.com/abcminiuser/lufa/releases/tag/LUFA-170418) in this folder
 - run `make`
 
-Build with 
-- make v 3.81
-- avrdude 6.0.1
-- avr-gcc:
-Configured with: ../configure --prefix=/usr/local/CrossPack-AVR-20131216 --disable-dependency-tracking --disable-nls --disable-werror --target=avr --enable-languages=c,c++ --disable-libssp --disable-libada --with-dwarf2 --disable-shared --with-avrlibc=yes --with-gmp=/Users/cs/Developer/Repos/Microcontroller/CrossPack-AVR/temporary-install --with-mpfr=/Users/cs/Developer/Repos/Microcontroller/CrossPack-AVR/temporary-install --with-mpc=/Users/cs/Developer/Repos/Microcontroller/CrossPack-AVR/temporary-install
-Thread model: single
-gcc version 4.8.1 (GCC) 
+Current version built with 
+- make v 4.1
+- avr-gcc: 4.9.2 + Atmel3.5.3-1
+- avrdude 6.3
 
 
 ## Credits
