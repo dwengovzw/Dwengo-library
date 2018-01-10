@@ -238,7 +238,7 @@
     }
 
     void LCD_clear(void);
-    void LCD_init(bool waitForPowerUp);
+    void LCD_init(void);
     void LCD_print(const char* str);
     void LCD_setCursor(uint8_t row, uint8_t col);
 

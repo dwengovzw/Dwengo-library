@@ -520,7 +520,7 @@ static void SetupNormalHardware()
     LEDs_Init();
 
     // Init LCD and print Bootloader is in idle state
-    LCD_init(initialMCUSR & _BV(PORF));
+    LCD_init();
     LCD_BL_Off();
     LCD_print("Bootloader:");
     LCD_setCursor(1, 1);

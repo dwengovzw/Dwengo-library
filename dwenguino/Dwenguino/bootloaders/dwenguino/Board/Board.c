@@ -21,10 +21,10 @@ void LCD_clear(){
     _delay_us(1700);
 }
 
-void LCD_init(bool waitForPowerUp){
+void LCD_init(){
     LCD_PortInit();
     LCD_RW_Low();
-    if (waitForPowerUp) _delay_ms(15);  // according to Datasheet: wait 40 ms after powerup: but power is normally already on before bootloader is started! TODO: necessary??
+    _delay_ms(15);  // according to Datasheet: wait 40 ms after powerup: but power is normally already on before bootloader is started! TODO: necessary??
     LCD_sendByte(true, LCD_FUNCTIONSET | LCD_8BITMODE | LCD_2LINE | LCD_5x8DOTS); // TODO: repeat?
     LCD_sendByte(true, LCD_DISPLAYCONTROL | LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF);
     LCD_sendByte(true, LCD_ENTRYMODESET | LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT);
