@@ -111,6 +111,7 @@ with doxygen.
 *   - change timing behaviour: timer 1 now runs at 1kHz
 *   - add LED13 animation: led fades in and out during bootloader idle time and flashes on data transfer
 *   - indicate bootloader mode on lcd display
+*   - set and check application integrity  
 *   
 */
 #define INCLUDE_FROM_KATIANA_C
@@ -179,6 +180,14 @@ for programming to flash. There is also a cast defined to access this buffer as 
 static uint8_t flashByteBuffer[2] ATTR_NO_INIT;
 #define flashWordBuffer (uint16_t *)flashByteBuffer;
 #endif
+
+/* Programming integrity word: when the bootloader starts programming the flash the integrity word is
+ cleared, when programming ends succefully a integrity word is written to the last word address of
+ the application memory, when the bootloader starts up it reads this integrity byte to check if the 
+ application present is correctly programmed, if not, it doesn't start the application.
+*/
+#define APPINTEGRITY_ADDRESS (BOOT_START_ADDR - 2)
+#define APPINTEGRITY_WORD 0x4B4F
 
 /** 
 <h3>Boot Key</h3>
@@ -431,8 +440,14 @@ main(void)
     //
     // if progmem == 0xffff, adding one rolls over to 0x0000
     //
-    if  (pgm_read_word_near(0) != 0xFFFFu)
-    {
+    if  (pgm_read_word_near(0) == 0xFFFFu){
+        // first word in application memory are all ones => no sketch available
+    }
+    else if (pgm_read_word_near(APPINTEGRITY_ADDRESS) == 0xFFFFu){
+        // app integrity word is read as all ones => corrupt app
+    }
+    else {
+        // in case a valid sketch is present start sketch start logic
         sketchPresent = 0xffu;
         SketchStartLogic();
     }
@@ -530,7 +545,7 @@ static void SetupNormalHardware()
     // Init LCD and print Bootloader is in idle state
     LCD_init();
     LCD_BL_Off();
-    LCD_print("Bootloader:");
+    LCD_print("Bootloader \xA5 ");
     LCD_setCursor(1, 1);
     LCD_print("Awaiting PC");
     LCD_setCursor(1, 1);
@@ -997,8 +1012,30 @@ static void ProcessAVR910Command(void)
         /* Send confirmation byte back to the host */
         CdcSendByte('\r');
     }
-    else if ((Command == AVR109_COMMAND_EnterProgrammingMode) || (Command == AVR109_COMMAND_LeaveProgrammingMode))
+    else if (Command == AVR109_COMMAND_EnterProgrammingMode)
     {
+        // clear integirty byte at very last word position of application section at the start of new programming session
+        cli();
+        boot_page_erase(APPINTEGRITY_ADDRESS & SPM_PAGEMASK);
+        sei();
+        boot_spm_busy_wait();
+        BootRwwEnable();
+
+        /* Send confirmation byte back to the host */
+        CdcSendByte('\r');
+    }
+    else if (Command == AVR109_COMMAND_LeaveProgrammingMode)
+    {
+        // set progbramming integrity byte at the very last word position of application section if there isn't already some ohter byte written there
+        if (pgm_read_word_near(APPINTEGRITY_ADDRESS) == 0xFFFFu){
+            cli();
+            boot_page_fill(APPINTEGRITY_ADDRESS, APPINTEGRITY_WORD); // page buffer is automatically cleared after last operation, only fill integrity word at the last position
+            boot_page_write(APPINTEGRITY_ADDRESS & SPM_PAGEMASK); // write page buffer without erasing page, in order to only modify last integrity word and leave all other unchanged
+            sei();
+            boot_spm_busy_wait();
+            BootRwwEnable();
+        }
+
         /* Send confirmation byte back to the host */
         CdcSendByte('\r');
     }
