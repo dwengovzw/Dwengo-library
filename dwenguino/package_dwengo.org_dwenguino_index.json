@@ -47,8 +47,8 @@
           },
           "url": "https://github.com/dwengovzw/Dwengo-library/raw/bootloaderUpdates/dwenguino/Dwenguino-2.2.0.zip",
           "archiveFileName": "Dwenguino.zip",
-          "checksum": "SHA-256:4f70e0becc78821ebc334758452b7fd36cfa34aa6df025f3aa41c18f589bbc80",
-          "size": "321474",
+          "checksum": "SHA-256:56b9259b6f19c5626b0de208752bbf52fc6861c0a6b24b8e5d5daf518c8497b8",
+          "size": "325771",
           "boards": [
             {"name": "Dwenguino"}
           ],
