@@ -225,6 +225,10 @@ timeout is decremented in the Timer 1 compare match ISR and stops when it reache
 */
 static volatile uint16_t timeout ATTR_NO_INIT;
 
+// Reason why board is in bootloader mode
+static char* bootloaderReason = "";
+
+
 // Timing constants
 #if !(F_CPU == 16000000)
 #error Current configuration for timer 1 requires a 16 MHz clock speed.
@@ -339,21 +343,41 @@ will cause the bootloader to run with an 8 second timeout.
 2) If reset was due to WDT, the sketch will be restarted immediately with no delay.
 This is how the Arduino core causes a reboot when the CDC COM port is touched at 1200 baud.
 
-Do NOT call this function if there is no sketch present!!!
 */
 static void inline SketchStartLogic(void)
 {
+    //
+    // if progmem == 0xffff, adding one rolls over to 0x0000
+    //
+    if  (pgm_read_word_near(0) == 0xFFFFu){
+        // first word in application memory are all ones => no sketch available
+        bootloaderReason = "NA";    // no app available
+        return;
+    }
+
+    if (pgm_read_word_near(APPINTEGRITY_ADDRESS) == 0xFFFFu){
+        // app integrity word is read as all ones => corrupt app
+        bootloaderReason = "CA";    // corrupt app 
+        return;
+    }
+
+    // in case a valid sketch is present
+    sketchPresent = 0xffu;
+
     //
     // Power-on and brown-out resets will always cause the sketch to load immediately.
     //
     if (initialMCUSR & (_BV(PORF) | _BV(BORF))) {	
         StartSketch();
     } 
-    //
+    // bootkey is activated by a 1200 baud touch by the pc (programmer)
     // if the boot key is active, then don't run the sketch...
     //
-    uint8_t booty = originalBootKey - BOOT_KEY;
-    if (! booty) return;
+    uint8_t booty = originalBootKey - BOOT_KEY;    
+    if (! booty) {
+        bootloaderReason = "PC";
+        return;
+    }
     //
     // here, the boot cause is one of the following: External, WDT, JTAG, USB.
     // special behaviors only occur with external and WDT resets. All others
@@ -362,7 +386,10 @@ static void inline SketchStartLogic(void)
     if ( initialMCUSR & _BV(EXTRF) ) {
 
 #if defined (BOOTENTER_SWITCH)
-        if (BOOTSW_pressed()) return;
+        if (BOOTSW_pressed()) {
+            bootloaderReason = "RST";
+            return;
+        }
 #endif
 
 #if defined (BOOTENTER_DOUBLERESET)
@@ -387,8 +414,7 @@ static void inline SketchStartLogic(void)
     // a reboot cause by touching the CDC interface at 1200 baud, it will be necessary to use
     // a double-tap on the external reset to get into the bootloader.
     //
-    if ( initialMCUSR & _BV(WDRF) )
-    {
+    if ( initialMCUSR & _BV(WDRF) ){
         StartSketch();
     }
 }
@@ -437,20 +463,9 @@ main(void)
     SetupMinimalHardware();
 
     bootKey = 0;
-    //
-    // if progmem == 0xffff, adding one rolls over to 0x0000
-    //
-    if  (pgm_read_word_near(0) == 0xFFFFu){
-        // first word in application memory are all ones => no sketch available
-    }
-    else if (pgm_read_word_near(APPINTEGRITY_ADDRESS) == 0xFFFFu){
-        // app integrity word is read as all ones => corrupt app
-    }
-    else {
-        // in case a valid sketch is present start sketch start logic
-        sketchPresent = 0xffu;
-        SketchStartLogic();
-    }
+
+    // determine if the sketch should be started or start to accept programming instructions
+    SketchStartLogic();
 
     initialMCUSR |= 0x80u;	// flag the fact that the boot loader did not immediately start the sketch.
 
@@ -546,6 +561,7 @@ static void SetupNormalHardware()
     LCD_init();
     LCD_BL_Off();
     LCD_print("Bootloader \xA5 ");
+    LCD_print(bootloaderReason);
     LCD_setCursor(1, 1);
     LCD_print("Awaiting PC");
     LCD_setCursor(1, 1);

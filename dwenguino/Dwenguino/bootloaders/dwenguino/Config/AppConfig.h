@@ -56,7 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /** \file
- *  \brief Application Configuration Header File
+ *  \brief Application Configuration Header File 
  *
  *  This is a header file which is be used to configure LUFA's
  *  compile time options, as an alternative to the compile time
@@ -82,9 +82,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 	#define ENABLE_BLOCK_SUPPORT
 // 
-// This one is highly recommended
+// checks if flash / eeprom address + blocksize are valid => not very useful, avrdude doesn't make mistakes + bootloader is protected by lock fuse
 //
-	#define ENABLE_SECURITY_CHECKS
+// #define ENABLE_SECURITY_CHECKS
 
 // Enter bootloader by doubleclick reset
   // #define BOOTENTER_DOUBLERESET
