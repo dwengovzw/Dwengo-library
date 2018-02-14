@@ -219,7 +219,7 @@ This is set based on whether the reset vector at location zero is all ones or no
 if a sketch is loaded, the reset vector will not be all ones.
 */
 static volatile uint8_t sketchPresent;
-
+static uint8_t corruptApp_NotProgramming = false;
 /**
 timeout is decremented in the Timer 1 compare match ISR and stops when it reaches zero.
 */
@@ -357,6 +357,7 @@ static void inline SketchStartLogic(void)
 
     if (pgm_read_word_near(APPINTEGRITY_ADDRESS) == 0xFFFFu){
         // app integrity word is read as all ones => corrupt app
+        corruptApp_NotProgramming = true;
         bootloaderReason = "CA";    // corrupt app 
         return;
     }
@@ -500,6 +501,10 @@ main(void)
         // here instead of calling it...See USBTask.c in LUFA/Drivers/USB/Core.
         //
         USB_USBTask();
+
+        // if there is an application loaded, but app integrity byte is not set, bootloader mode will setup instead of app
+        // however, if the boot switch is pressed before a programming session started, start the (corrupt) sketch anyway
+        if (corruptApp_NotProgramming && BOOTSW_pressed()) break;
     }
 
     /* Wait a short time to wrap up all USB transactions and then disconnect */
@@ -1106,6 +1111,7 @@ static void ProcessAVR910Command(void)
     else if (Command == AVR109_COMMAND_ReadBootloaderIdentifier)
     {
         // This is the first command that will get executed by the host after connection has been established => enter programming mode on LCD
+        corruptApp_NotProgramming = false;
         LCD_showProgrammingMode();   
      /* Write the 7-byte software identifier to the endpoint */
         WriteProgmemArray( softwareIdentifier, 7 );
