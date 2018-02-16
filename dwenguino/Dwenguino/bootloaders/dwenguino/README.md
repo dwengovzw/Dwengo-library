@@ -16,7 +16,9 @@ Current version built with
 - make v 3.81
 CrossPack 2013-12-16:
 - avr-gcc: 4.8.1
+
 - avrdude 6.3
+- srec_cat 1.64
 
 Warning: known issues with avr-gcc 7.3, use latest CrossPack instead
 
