@@ -186,8 +186,7 @@ static uint8_t flashByteBuffer[2] ATTR_NO_INIT;
  the application memory, when the bootloader starts up it reads this integrity byte to check if the 
  application present is correctly programmed, if not, it doesn't start the application.
 */
-#define APPINTEGRITY_ADDRESS (BOOT_START_ADDR - 2)
-#define APPINTEGRITY_WORD 0x4B4F
+// APPINTEGRITY_ADDRESS and APPINTEGRITY_WORD defined by makefile
 
 /** 
 <h3>Boot Key</h3>
