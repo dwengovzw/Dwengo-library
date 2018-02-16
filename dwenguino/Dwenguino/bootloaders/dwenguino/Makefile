@@ -19,6 +19,7 @@
 # =========== USER EDIT SECTION ====================
 #
 VERSION		 = 2.2.0
+
 MCU          = at90usb646
 ARCH         = AVR8
 BOARD        = USER
@@ -119,7 +120,8 @@ package:
 	rm -rf $(OBJDIR)
 	rm -f $(TARGET).elf $(TARGET).bin $(TARGET).eep $(TARGET).map $(TARGET).lss $(TARGET).sym lib$(TARGET).a
 	zip -q ../../../Dwenguino-$(VERSION).zip -x \*.DS_Store -r ../../../Dwenguino -x "../../../Dwenguino/bootloaders/dwenguino/LUFA*"
-	shasum -a 256 ../../../Dwenguino-2.2.0.zip
+	shasum -a 256 ../../../Dwenguino-$(VERSION).zip
+	wc -c < ../../../Dwenguino-$(VERSION).zip
 
 # Include LUFA-specific DMBS extension modules
 DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
