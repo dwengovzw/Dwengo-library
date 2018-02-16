@@ -7,12 +7,18 @@ also see https://github.com/aweatherguy/Katiana/blob/master/Katiana-Bootloader.p
 
 ## Build instructions
 - download the [LUFA library - v170418](https://github.com/abcminiuser/lufa/releases/tag/LUFA-170418) in this folder
-- run `make`
+- make sure arduino IDE is installed, download from [arduino.cc](https://www.arduino.cc/en/Main/Software)
+- install Srecord `brew install Srecord` or `sudo apt-get install srecord`
+- run `make` to build bootloader, Welcome sketch and combine both into a final bootloader hex file
+- run `make package` to create a final zip package for arduino IDE board manager
 
 Current version built with 
-- make v 4.1
-- avr-gcc: 4.9.2 + Atmel3.5.3-1
+- make v 3.81
+CrossPack 2013-12-16:
+- avr-gcc: 4.8.1
 - avrdude 6.3
+
+Warning: known issues with avr-gcc 7.3, use latest CrossPack instead
 
 
 ## Credits

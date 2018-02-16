@@ -213,7 +213,7 @@ static void inline SetupNormalHardware(void);
   Some clever person could maybe find a way to prevent that warning from 
   being emitted?
 */
-static void __attribute__((noreturn naked noinline)) StartSketch( void );
+static void __attribute__((noreturn, naked, noinline)) StartSketch( void );
 
 #if defined(ENABLE_SECURITY_CHECKS)
     static uint8_t ValidateFlashBlock(uint16_t);
