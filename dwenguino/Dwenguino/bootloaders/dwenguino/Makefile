@@ -88,6 +88,9 @@ ArduinoBuilder_flags =	-hardware $(ArduinoAppDir)hardware -hardware $(WELCOME_HA
 # Combine application with bootloader
 APPINTEGRITYgenerator = -gen $(APPINTEGRITY_ADDRESS) $(BOOT_START_OFFSET) -constant-l-e $(APPINTEGRITY_WORD) 2
 
+PackageExludes = "*.DS_Store" "Dwenguino/bootloaders/dwenguino/LUFA*" "Dwenguino/bootloaders/dwenguino/obj/*" \
+				 "*/$(TARGET).elf" "*/$(TARGET).bin" "*/$(TARGET).eep" "*/$(TARGET).map" "*/$(TARGET).lss" "*/$(TARGET).sym" "*/lib$(TARGET).a"
+
 # Default target
 all: $(COMBINED).hex
 
@@ -117,11 +120,11 @@ cleanCombinedWelcome:
 
 package:
 	@echo $(MSG_INFO_MESSAGE) Creating final zip-package \(without intermediate build output\)
-	rm -rf $(OBJDIR)
-	rm -f $(TARGET).elf $(TARGET).bin $(TARGET).eep $(TARGET).map $(TARGET).lss $(TARGET).sym lib$(TARGET).a
-	zip -q ../../../Dwenguino-$(VERSION).zip -x \*.DS_Store -r ../../../Dwenguino -x "../../../Dwenguino/bootloaders/dwenguino/LUFA*"
-	shasum -a 256 ../../../Dwenguino-$(VERSION).zip
-	wc -c < ../../../Dwenguino-$(VERSION).zip
+	rm -f $(WELCOME_HARDWAREDIR)dwenguino/avr
+	cd ../../.. && \
+	zip -q -FS Dwenguino-$(VERSION).zip -r Dwenguino -x $(PackageExludes) && \
+	shasum -a 256 Dwenguino-$(VERSION).zip && \
+	wc -c < Dwenguino-$(VERSION).zip
 
 # Include LUFA-specific DMBS extension modules
 DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
