@@ -40,14 +40,14 @@
         {
           "name": "Dwenguino",
           "architecture": "avr",
-          "version": "2.2.0",
+          "version": "2.2.1",
           "category": "Contributed",
           "help": {
             "online": "http://www.dwengo.org/tutorials"
           },
-          "url": "https://github.com/dwengovzw/Dwengo-library/raw/bootloaderUpdates/dwenguino/Dwenguino-2.2.0.zip",
-          "archiveFileName": "Dwenguino-2.2.0.zip",
-          "checksum": "SHA-256:2c97629a6305db9247f2b8b388956d9b7f1707d5369a5a743ee8d46f86f6152d",
+          "url": "http://www.dwengo.org/sites/default/files/Dwenguino-2.2.1.zip",
+          "archiveFileName": "Dwenguino-2.2.1.zip",
+          "checksum": "SHA-256:60e42e6416e7c5b9e20d1edbbf8f93e86fa0d521249f649b3434bcc8185421da",
           "size": "333520",
           "boards": [
             {"name": "Dwenguino"}

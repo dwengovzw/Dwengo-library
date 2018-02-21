@@ -18,7 +18,7 @@
 #
 # =========== USER EDIT SECTION ====================
 #
-VERSION		 = 2.2.0
+VERSION		 = 2.2.1
 
 MCU          = at90usb646
 ARCH         = AVR8
