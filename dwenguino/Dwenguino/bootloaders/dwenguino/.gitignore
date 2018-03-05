@@ -10,3 +10,4 @@ obj
 *.map
 *.bak
 *.class
+.vscode

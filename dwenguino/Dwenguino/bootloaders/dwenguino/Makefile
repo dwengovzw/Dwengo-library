@@ -113,6 +113,9 @@ $(COMBINED).hex: $(WELCOME_HEX).hex $(TARGET).hex
 	@echo $(MSG_INFO_MESSAGE) Combine Bootloader with Welcome app into one hex file
 	srec_cat '(' $(WELCOME_HEX).hex -Intel $(TARGET).hex -Intel $(APPINTEGRITYgenerator) ')' -fill 0xff 0x0000 $(FLASH_END_OFFSET) -o $(COMBINED).hex -Intel -address-length=2
 
+AppIntegrity.hex:
+	srec_cat $(APPINTEGRITYgenerator) -o $@ -Intel -address-length=2
+
 cleanCombinedWelcome:
 	@echo $(MSG_REMOVE_CMD) Removing output files of Welcome sketch and combined sketch and bootloader
 	rm -rf $(WELCOME_OBJDIR) $(WELCOME_HARDWAREDIR)
