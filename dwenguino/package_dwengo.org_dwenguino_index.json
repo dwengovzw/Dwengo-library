@@ -6,7 +6,7 @@
       "websiteURL": "http://www.dwengo.org/",
       "email": "developers@dwengo.org",
       "help": {
-        "online": "http://www.dwengo.org/tutorials"
+        "online": "http://www.dwengo.org"
       },
       "platforms": [
         {
@@ -15,9 +15,9 @@
           "version": "2.1.0",
           "category": "Contributed",
           "help": {
-            "online": "http://www.dwengo.org/tutorials"
+            "online": "http://www.dwengo.org"
           },
-          "url": "http://www.dwengo.org/sites/default/files/Dwenguino.zip",
+          "url": "http://old.dwengo.org/sites/default/files/Dwenguino.zip",
           "archiveFileName": "Dwenguino.zip",
           "checksum": "SHA-256:18FDB829D8591C0B656DFBAA03F775266ECFAD5CBB99203B942CA82A1D526B19",
           "size": "254686",
@@ -43,9 +43,9 @@
           "version": "2.2.1",
           "category": "Contributed",
           "help": {
-            "online": "http://www.dwengo.org/tutorials"
+            "online": "http://www.dwengo.org/"
           },
-          "url": "https://dwengo.org/wp-content/uploads/2019/09/Dwenguino-2.2.1-1.zip",
+          "url": "https://old.dwengo.org/wp-content/uploads/2019/09/Dwenguino-2.2.1-1.zip",
           "archiveFileName": "Dwenguino-2.2.1.zip",
           "checksum": "SHA-256:60e42e6416e7c5b9e20d1edbbf8f93e86fa0d521249f649b3434bcc8185421da",
           "size": "333520",
